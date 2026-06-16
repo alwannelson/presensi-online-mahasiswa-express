@@ -1,0 +1,205 @@
+<aside class="sidebar" id="sidebar" data-aos="fade-right" data-aos-duration="1500">
+  <div class="resizer" id="resizer"></div>
+
+  <div class="sidebar-brand">
+    <a href="/dashboard/hari-ini">
+      <i class="fas fa-graduation-cap"></i>
+      <span>e-Presencia</span>
+    </a>
+  </div>
+
+  <div class="user-info">
+    <div class="user-avatar">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="user-fullname"><%= user.fullname %></div>
+    <div class="user-role"><%= user.role %></div>
+    <div class="user-nim-wrapper">
+      <div class="user-nim">
+        <i class="fas fa-id-card"></i>
+        <span id="nimText">NIM: <%= user.nim %></span>
+      </div>
+      <button class="btn-copy-nim" id="copyNimBtn" data-nim="<%= user.nim %>">
+        <i class="fas fa-copy"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-item has-dropdown" id="studentsDropdownParent">
+      <div class="sidebar-link">
+        <i class="fas fa-users"></i>
+        <span>Students</span>
+        <i class="fas fa-chevron-right chevron"></i>
+      </div>
+      <ul class="nav-dropdown" id="studentsDropdown">
+        <li class="nav-item">
+          <a href="/s/today" class="sidebar-link <%= activeMenu === 'today' ? 'active' : '' %>">
+            <i class="fas fa-calendar-day"></i>
+            <span>Hari Ini</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/s/courses" class="sidebar-link <%= activeMenu === 'courses' ? 'active' : '' %>">
+            <i class="fas fa-book"></i>
+            <span>Mata Kuliah</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/s/view-attendance" class="sidebar-link <%= activeMenu === 'view-attendance' ? 'active' : '' %>">
+            <i class="fas fa-check-circle"></i>
+            <span>Cek Kehadiran</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="nav-item">
+      <a href="https://portal.jayanusa.ac.id" target="_blank" class="sidebar-link <%= activeMenu === 'portal' ? 'active' : '' %>">
+        <i class="fas fa-external-link-alt"></i>
+        <span>Portal Jayanusa</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/s/settings" class="sidebar-link <%= activeMenu === 'pengaturan' ? 'active' : '' %>">
+        <i class="fas fa-cog"></i>
+        <span>Pengaturan</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/s/help" class="sidebar-link <%= activeMenu === 'bantuan' ? 'active' : '' %>">
+        <i class="fas fa-question-circle"></i>
+        <span>Bantuan</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <form action="/logout" method="POST" id="logoutForm">
+        <button type="submit" class="sidebar-link logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</aside>
+
+<script>
+  (function() {
+    // Open dropdown if one of its children is active
+    const activeMenu = '<%= activeMenu %>';
+    if (activeMenu === 'hari-ini' || activeMenu === 'mata-kuliah' || activeMenu === 'cek-kehadiran') {
+      const dropdownParent = document.getElementById('studentsDropdownParent');
+      const dropdown = document.getElementById('studentsDropdown');
+      if (dropdownParent && dropdown) {
+        dropdownParent.classList.add('open');
+        dropdown.classList.add('show');
+      }
+    }
+
+    // Confirm logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutForm = document.getElementById('logoutForm');
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+          title: '<span style="color: #2c5a6e;">Yakin ingin keluar?</span>',
+          text: "Anda akan diarahkan ke halaman login",
+          icon: 'question',
+          iconColor: '#8fb3c2',
+          showCancelButton: true,
+          confirmButtonColor: '#8fb3c2',
+          cancelButtonColor: '#e0c8c8',
+          confirmButtonText: '<i class="fas fa-sign-out-alt me-2"></i>Ya, Keluar',
+          cancelButtonText: '<i class="fas fa-times me-2"></i>Batal',
+          reverseButtons: true,
+          backdrop: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          customClass: {
+            popup: 'logout-popup',
+            title: 'logout-title',
+            confirmButton: 'logout-confirm-btn',
+            cancelButton: 'logout-cancel-btn'
+          },
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Tampilkan loading
+            Swal.fire({
+              title: 'Keluar...',
+              text: 'Sedang memproses logout',
+              icon: 'info',
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+              }
+            });
+
+            // Submit form setelah delay 500ms untuk efek loading
+            setTimeout(() => {
+              logoutForm.submit();
+            }, 500);
+          }
+        });
+      });
+    }
+
+    // Copy NIM functionality
+    const copyBtn = document.getElementById('copyNimBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async function() {
+        const nim = this.getAttribute('data-nim');
+
+        try {
+          await navigator.clipboard.writeText(nim);
+          const icon = this.querySelector('i');
+          const originalIcon = icon.className;
+          icon.className = 'fas fa-check';
+          this.classList.add('copied');
+          showCopyNotification('NIM berhasil disalin!');
+
+          setTimeout(() => {
+            icon.className = originalIcon;
+            this.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          const textarea = document.createElement('textarea');
+          textarea.value = nim;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showCopyNotification('NIM berhasil disalin!');
+        }
+      });
+    }
+
+    function showCopyNotification(message) {
+      const existingNotif = document.querySelector('.copy-notification');
+      if (existingNotif) existingNotif.remove();
+
+      const notification = document.createElement('div');
+      notification.className = 'copy-notification';
+      notification.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
+      document.body.appendChild(notification);
+
+      setTimeout(() => notification.classList.add('show'), 10);
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 2000);
+    }
+  })();
+</script>

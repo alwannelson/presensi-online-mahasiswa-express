@@ -1,0 +1,122 @@
+* {
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(145deg, #eef2f5 0%, #e0e8ee 100%);
+        /* warna body yang kalem: gradasi abu kebiruan sangat lembut, cocok dengan navbar */
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        transition: background 0.3s ease;
+      }
+
+      /* tambahan efek tenang untuk body */
+      .content-wrapper {
+        max-width: 1300px;
+        margin: 2rem auto;
+        padding: 0 24px;
+      }
+
+      /* Card / komponen dengan bayangan lembut agar konten rapi */
+      .calm-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(2px);
+        border-radius: 28px;
+        box-shadow:
+          0 12px 28px rgba(0, 0, 0, 0.03),
+          0 2px 4px rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        padding: 2rem 1.8rem;
+        transition: all 0.2s;
+      }
+
+      h1,
+      h2,
+      p {
+        color: #2c3e44;
+      }
+
+      .btn-custom {
+        background-color: #92a8b0;
+        border: none;
+        color: white;
+        border-radius: 40px;
+        padding: 8px 22px;
+        font-weight: 500;
+        transition: 0.2s;
+      }
+
+      .btn-custom:hover {
+        background-color: #7c929b;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+      }
+
+      /* navbar transition halus */
+      .navbar {
+        transition: all 0.2s ease;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+      }
+
+      /* efek hover link */
+      .navbar-nav .nav-link {
+        transition: all 0.2s;
+        font-weight: 500;
+        margin: 0 4px;
+        border-radius: 40px;
+        padding: 8px 18px;
+      }
+
+      .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      /* active link style lembut */
+      .navbar-nav .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        font-weight: 600;
+      }
+
+      /* brand icon & text */
+      .navbar-brand i {
+        font-size: 1.7rem;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+
+      .navbar-brand {
+        font-weight: 600;
+        letter-spacing: -0.2px;
+      }
+
+      /* toggler icon lebih soft */
+      .navbar-toggler {
+        border: none;
+        padding: 0.5rem 0.75rem;
+      }
+
+      .navbar-toggler:focus {
+        box-shadow: 0 0 0 2px rgba(146, 168, 176, 0.5);
+      }
+
+      /* footer sederhana agar body terlihat seimbang */
+      .footer-note {
+        text-align: center;
+        margin-top: 4rem;
+        padding: 1.5rem;
+        color: #5e7b86;
+        font-size: 0.85rem;
+        border-top: 1px solid rgba(146, 168, 176, 0.25);
+      }
+
+      /* responsif slight adjustments */
+      @media (max-width: 992px) {
+        .calm-card {
+          padding: 1.5rem;
+        }
+        .navbar-nav .nav-link {
+          padding: 8px 12px;
+        }
+      }

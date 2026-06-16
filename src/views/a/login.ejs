@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title><%= title %> | Jay Presencia</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef2f7 0%, #dee5ec 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background - Same as dashboard */
+    .bg-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(140, 177, 194, 0.1);
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 500px;
+      height: 500px;
+      bottom: -200px;
+      right: -200px;
+      animation-delay: 5s;
+    }
+
+    .shape-3 {
+      width: 200px;
+      height: 200px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 10s;
+      opacity: 0.3;
+    }
+
+    .shape-4 {
+      width: 150px;
+      height: 150px;
+      top: 20%;
+      right: 10%;
+      animation-delay: 3s;
+    }
+
+    .shape-5 {
+      width: 250px;
+      height: 250px;
+      bottom: 10%;
+      left: 5%;
+      animation-delay: 7s;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      33% {
+        transform: translate(30px, -30px) rotate(120deg);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) rotate(240deg);
+      }
+    }
+
+    /* Login Container */
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 450px;
+      margin: 20px;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Login Card - Same style as dashboard cards */
+    .login-card {
+      background: var(--card-bg, white);
+      border-radius: 24px;
+      padding: 40px 35px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2edf2;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Logo & Header */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .logo-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      box-shadow: 0 4px 12px rgba(44, 90, 110, 0.2);
+    }
+
+    .logo-icon i {
+      font-size: 35px;
+      color: white;
+    }
+
+    .logo-section h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #2c5a6e;
+      margin-bottom: 8px;
+    }
+
+    .logo-section p {
+      font-size: 14px;
+      color: #6c7a8a;
+      margin: 0;
+    }
+
+    /* Form Styles - Same as dashboard forms */
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .input-group-custom {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      color: #8cb1c2;
+      font-size: 18px;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-control-custom {
+      width: 100%;
+      padding: 12px 16px 12px 48px;
+      font-size: 14px;
+      border: 1.5px solid #e2edf2;
+      border-radius: 12px;
+      background: white;
+      color: #1a2639;
+      transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+      outline: none;
+      border-color: #8cb1c2;
+      box-shadow: 0 0 0 3px rgba(140, 177, 194, 0.2);
+    }
+
+    .form-control-custom:hover {
+      border-color: #8cb1c2;
+    }
+
+    /* Password Toggle */
+    .password-toggle {
+      position: absolute;
+      right: 16px;
+      cursor: pointer;
+      color: #8ba0b0;
+      transition: color 0.3s ease;
+      z-index: 10;
+      background: white;
+      padding-left: 8px;
+    }
+
+    .password-toggle:hover {
+      color: #2c5a6e;
+    }
+
+    /* Remember & Forgot */
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #6c7a8a;
+    }
+
+    .checkbox-label input {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #8cb1c2;
+    }
+
+    .forgot-link {
+      font-size: 13px;
+      color: #8cb1c2;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-link:hover {
+      color: #2c5a6e;
+      text-decoration: underline;
+    }
+
+    /* Login Button - Same as dashboard buttons */
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 90, 110, 0.3);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    /* Logo Section dengan Gambar */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(44, 90, 110, 0.2);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .logo-icon:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(44, 90, 110, 0.25);
+    }
+
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    /* Atau jika ingin logo dengan background putih */
+    .logo-icon-white {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      padding: 12px;
+      border: 1px solid #e2edf2;
+    }
+
+    .logo-icon-white:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-img-white {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Logo section text */
+    .logo-section h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #2c5a6e;
+      margin: 15px 0 5px;
+    }
+
+    .logo-section p {
+      font-size: 13px;
+      color: #6c7a8a;
+      margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+
+      .logo-icon,
+      .logo-icon-white {
+        width: 65px;
+        height: 65px;
+        padding: 10px;
+      }
+
+      .logo-section h2 {
+        font-size: 22px;
+      }
+
+      .logo-section p {
+        font-size: 12px;
+      }
+    }
+
+    /* Divider */
+    .divider {
+      text-align: center;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #e2edf2;
+    }
+
+    .divider span {
+      background: white;
+      padding: 0 15px;
+      position: relative;
+      font-size: 12px;
+      color: #8ba0b0;
+    }
+
+    /* Register Link */
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .register-link p {
+      font-size: 14px;
+      color: #6c7a8a;
+      margin: 0;
+    }
+
+    .register-link a {
+      color: #8cb1c2;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .register-link a:hover {
+      color: #2c5a6e;
+      text-decoration: underline;
+    }
+
+    /* Alert Messages - Same as dashboard */
+    .alert-custom {
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-left: 3px solid #dc3545;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-left: 3px solid #28a745;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-left: 3px solid #17a2b8;
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 11px;
+      color: #8ba0b0;
+    }
+
+    .login-footer a {
+      color: #8cb1c2;
+      text-decoration: none;
+    }
+
+    .login-footer a:hover {
+      color: #2c5a6e;
+      text-decoration: underline;
+    }
+
+    /* Loading State */
+    .btn-login.loading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .btn-login.loading i {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 30px 25px;
+      }
+
+      .logo-icon {
+        width: 60px;
+        height: 60px;
+      }
+
+      .logo-icon i {
+        font-size: 28px;
+      }
+
+      .logo-section h2 {
+        font-size: 24px;
+      }
+
+      .form-control-custom {
+        padding: 10px 12px 10px 45px;
+        font-size: 13px;
+      }
+
+      .input-icon {
+        font-size: 16px;
+        left: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <img src="/img/icon/logo-jn.png" alt="Logo Jay Presencia" class="logo-img">
+        </div>
+        <h2>Akademik Jayanusa</h2>
+      </div>
+
+      <!-- Flash Messages -->
+      <% if (error) { %>
+      <div class="alert-custom alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><%= error %></span>
+      </div>
+      <% } %>
+
+      <% if (success) { %>
+      <div class="alert-custom alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span><%= success %></span>
+      </div>
+      <% } %>
+
+      <% if (info) { %>
+      <div class="alert-custom alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span><%= info %></span>
+      </div>
+      <% } %>
+
+      <!-- Login Form -->
+      <form action="/login/academic" method="POST" id="loginForm">
+        <div class="form-group">
+          <div class="input-group-custom">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" class="form-control-custom" id="username" name="username" placeholder="Username" required autocomplete="off"">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-group-custom">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" class="form-control-custom" id="password" name="password" placeholder="Kata Sandi" required autocomplete="current-password">
+            <i class="fas fa-eye-slash password-toggle" id="togglePassword"></i>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Masuk</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <i class="fas fa-copyright me-1"></i>
+        Designed & Developed by Alwan Aditia
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle Password Visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePassword && passwordInput) {
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+    }
+
+    // Loading state on form submit
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', function(e) {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (!email || !password) {
+          e.preventDefault();
+          Swal.fire({
+            title: 'Perhatian!',
+            text: 'Email dan password harus diisi!',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#8cb1c2'
+          });
+          return;
+        }
+
+        // Add loading state
+        loginBtn.classList.add('loading');
+        loginBtn.querySelector('span').textContent = 'Memproses...';
+        loginBtn.querySelector('i').className = 'fas fa-spinner';
+      });
+    }
+
+    // Auto hide flash messages after 5 seconds
+    setTimeout(() => {
+      const alerts = document.querySelectorAll('.alert-custom');
+      alerts.forEach(alert => {
+        alert.style.transition = 'opacity 0.5s';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+      });
+    }, 5000);
+  </script>
+</body>
+
+</html>

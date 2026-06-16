@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Mata Kuliah - <%= course[0].course_name || 'Mata Kuliah' %>
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffffff 0%, #fdfbff 100%);
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Container Card */
+    .detail-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .detail-card {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 0.5s ease;
+      position: relative;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Tombol Kembali - Di dalam card */
+    .btn-back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: white;
+    }
+
+    .btn-back:hover {
+      transform: translateX(-3px);
+      background: rgba(255, 255, 255, 0.35);
+      color: white;
+    }
+
+    .btn-back i {
+      font-size: 18px;
+    }
+
+    /* Header Card */
+    .card-header-custom {
+      background: linear-gradient(135deg, #2c4a5c 0%, #1e3a4a 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .card-header-custom h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .card-header-custom .badge-day {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    /* Body Card */
+    .card-body-custom {
+      padding: 30px;
+    }
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #eef2f5;
+    }
+
+    .info-icon {
+      width: 45px;
+      height: 45px;
+      background: #e8f4f8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2c4a5c;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .info-content {
+      flex: 1;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      word-break: break-word;
+    }
+
+    .info-value small {
+      font-weight: normal;
+      color: #666;
+    }
+
+    /* Grid untuk informasi tertentu */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    /* Footer */
+    .card-footer-custom {
+      background: #f8fafc;
+      padding: 20px 30px;
+      text-align: center;
+      border-top: 1px solid #eef2f5;
+    }
+
+    .btn-attendance {
+      background: linear-gradient(135deg, #2c4a5c 0%, #1e3a4a 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-attendance:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(44, 74, 92, 0.3);
+    }
+
+    /* Durasi Badge */
+    .duration-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e8f4f8;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2c4a5c;
+      margin-top: 10px;
+    }
+
+    .duration-badge i {
+      font-size: 14px;
+    }
+
+    /* Jam Row khusus */
+    .jam-row {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-top: 5px;
+    }
+
+    .jam-row .info-row {
+      border-bottom: none;
+      padding: 5px 0;
+    }
+
+    /* Loading & Error State */
+    .loading-state,
+    .error-state {
+      text-align: center;
+      padding: 50px;
+      background: white;
+      border-radius: 24px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .btn-back {
+        top: 45px;
+        left: 15px;
+        width: 36px;
+        height: 36px;
+      }
+
+      .btn-back i {
+        font-size: 16px;
+      }
+
+      .card-header-custom {
+        padding: 20px;
+      }
+
+      .card-header-custom h2 {
+        font-size: 1.4rem;
+      }
+
+      .card-body-custom {
+        padding: 20px;
+      }
+
+      .info-row {
+        gap: 12px;
+      }
+
+      .info-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+      }
+
+      .info-value {
+        font-size: 14px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card-header-custom h2 {
+        font-size: 1.2rem;
+      }
+
+      .badge-day {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="detail-container">
+    <% if (course && course.length > 0) { %>
+    <%
+    const data = course[0];
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const dayName = days[data.day];
+    
+    // Fungsi untuk memformat durasi (HH:MM:SS)
+    function formatDuration(duration) {
+      if (!duration) return '-';
+      // Jika duration sudah dalam format HH:MM:SS
+      if (typeof duration === 'string' && duration.includes(':')) {
+        return duration;
+      }
+      return duration;
+    }
+    %>
+    <div class="detail-card">
+      <!-- Tombol Kembali di dalam card -->
+      <a href="javascript:history.back()" class="btn-back" title="Kembali">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <div class="card-header-custom">
+        <h2>
+          <i class="fas fa-book-open me-2"></i>
+          <%= data.course_name %>
+        </h2>
+        <div class="badge-day">
+          <i class="fas fa-calendar-alt me-1"></i>
+          <%= dayName %>
+        </div>
+      </div>
+
+      <div class="card-body-custom">
+        <div class="info-group">
+
+          <!-- Dosen Pengampu -->
+          <div class="info-row">
+            <div class="info-icon">
+              <i class="fas fa-chalkboard-user"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Dosen Pengampu</div>
+              <div class="info-value">
+                <%= data.lecturer_name %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kontak Dosen -->
+          <div class="info-row">
+            <div class="info-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Kontak Dosen</div>
+              <div class="info-value">
+                <%= data.lecturer_telephone || '-' %>
+                <% if (data.lecturer_telephone) { %>
+                <a href="tel:<%= data.lecturer_telephone %>" class="ms-2 text-decoration-none" style="font-size: 12px;">
+                  <i class="fas fa-phone"></i> Hubungi
+                </a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Waktu Perkuliahan & Durasi -->
+          <div class="jam-row">
+            <div class="info-row" style="border-bottom: none;">
+              <div class="info-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">Waktu Perkuliahan</div>
+                <div class="info-value">
+                  <i class="fas fa-play-circle me-1" style="font-size: 12px;"></i> <%= data.start_time || data.start || '-' %>
+                  <br>
+                  <i class="fas fa-stop-circle me-1" style="font-size: 12px;"></i> <%= data.end_time || data.end || '-' %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tampilan Durasi dengan Badge -->
+            <div class="duration-badge">
+              <i class="fas fa-hourglass-half"></i>
+              <span>Durasi Perkuliahan:
+                <strong><%= data.durations || data.duration || '-' %></strong>
+              </span>
+            </div>
+          </div>
+
+          <!-- Grid Info: SKS, Kapasitas Kelas -->
+          <div class="info-grid">
+            <div class="info-row" style="border-bottom: none; padding: 0;">
+              <div class="info-icon" style="width: 40px; height: 40px;">
+                <i class="fas fa-layer-group"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">SKS</div>
+                <div class="info-value">
+                  <%= data.credits %> SKS
+                </div>
+              </div>
+            </div>
+            <div class="info-row" style="border-bottom: none; padding: 0;">
+              <div class="info-icon" style="width: 40px; height: 40px;">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">Kapasitas Kelas</div>
+                <div class="info-value">
+                  <%= data.capacity %> Mahasiswa
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kelas & Ruangan -->
+          <div class="info-row">
+            <div class="info-icon">
+              <i class="fas fa-location-dot"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Kelas & Ruangan</div>
+              <div class="info-value">
+                <%= data.class_name %>
+                <% if (data.location) { %>
+                <br><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>
+                  <%= data.location %>
+                </small>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="card-footer-custom">
+        <button class="btn-attendance" onclick="window.location.href='/presensi/matkul/<%= slug %>'">
+          <i class="fas fa-clipboard-list me-2"></i> Lihat Daftar Presensi
+        </button>
+      </div> -->
+    </div>
+    <% } else { %>
+    <div class="error-state">
+      <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #f39c12; margin-bottom: 20px;"></i>
+      <h4>Mata Kuliah Tidak Ditemukan</h4>
+      <p class="text-muted">Maaf, data mata kuliah yang Anda cari tidak tersedia.</p>
+      <a href="/s/today" class="btn btn-primary mt-3">
+        <i class="fas fa-arrow-left me-2"></i> Kembali ke Dashboard
+      </a>
+    </div>
+    <% } %>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,513 @@
+<% if (page === 'today') { %>
+
+<!-- KONTEN HARI INI -->
+<div class="content-card">
+  <h5 class="mb-3">
+    <i class="fas fa-calendar-alt me-2"></i>Jadwal Kuliah Hari Ini : <%= currentDay %>, <%= currentDate %>
+  </h5>
+  <div class="cards-container">
+    <% if (rows && rows.length > 0) { %>
+    <% rows.forEach((r, index) => { %>
+    <div class="schedule-card">
+      <div class="card-header">
+        <div class="course-info">
+          <h3 class="course-name" title="<%= r.course_name %>">
+            <%= r.course_name.length > 40 ? r.course_name.substring(0, 40) + '...' : r.course_name %>
+          </h3>
+          <span class="credits-badge"><%= r.course_credits %> SKS</span>
+        </div>
+        <div class="class-info">
+          <span class="class-name" title="<%= r.class_name %>">
+            <i class="fas fa-location-dot"></i>
+            <%= r.class_name.length > 30 ? r.class_name.substring(0, 30) + '...' : r.class_name %>
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="lecturer-info">
+          <i class="fas fa-chalkboard-user"></i>
+          <span title="<%= r.lecturer_name %>, <%= r.lecturer_degree %>">
+            <strong id="lecturer_name"><%= r.lecturer_name %>, <%= r.lecturer_degree %></strong>
+          </span>
+        </div>
+
+        <div class="schedule-time">
+          <div class="time-item">
+            <i class="fas fa-clock"></i>
+            <span>Mulai: <strong><%= r.start %></strong></span>
+          </div>
+          <div class="time-item">
+            <i class="fas fa-hourglass-end"></i>
+            <span>Selesai: <strong><%= r.end %></strong></span>
+          </div>
+          <div class="time-item duration">
+            <i class="fas fa-stopwatch"></i>
+            <span>Durasi: <strong><%= r.durations || r.duration %></strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <% if (r.attendance_status === 'hadir') { %>
+        <button class="btn-attend disabled" disabled style="opacity: 2; cursor: not-allowed;">
+          <i class="fas fa-check-circle" style="color: rgba(160, 255, 149, 0.814);"></i> Sudah Hadir
+        </button>
+        <% } else if (r.attendance_status === 'tidak_hadir') { %>
+        <button class="btn-absent disabled" disabled style="opacity: 0.6; cursor: not-allowed;">
+          <i class="fas fa-times-circle"></i> Sudah Tidak Hadir
+        </button>
+        <% } else { %>
+        <a href="/s/today/present/<%= r.slug %>" class="btn-attend" data-matkul="<%= r.course_name %>" data-lecturer="<%= r.lecturer_name %>" data-id="<%= r.id_schedule %>" style="text-decoration: none;">
+          <i class="fas fa-check-circle"></i> Hadir
+        </a>
+        <button class="btn-absent" data-matkul="<%= r.course_name %>" data-id="<%= r.id_schedule %>">
+          <i class="fas fa-times-circle"></i> Tidak Hadir
+        </button>
+
+        <% } %>
+      </div>
+    </div>
+    <!-- Load library terlebih dahulu -->
+    <script>
+      // Tombol Hadir
+      // Event delegation - lebih aman untuk dynamic element
+      const lecturerName = document.getElementById('lecturer_name').getHTML()
+      document.body.addEventListener('click', async function(e) {
+        // Cek apakah yang diklik adalah btn-attend atau di dalamnya
+        const btn = e.target.closest('.btn-attend');
+        if (!btn) return;
+
+        e.preventDefault();
+
+        // Cek apakah sudah diproses
+        if (btn.hasAttribute('data-processed')) return;
+        btn.setAttribute('data-processed', 'true');
+
+        const matkul = btn.getAttribute('data-matkul');
+        const lecturer = btn.getAttribute('data-lecturer');
+        const url = btn.getAttribute('href');
+
+        const confirmed = await JayPopup.confirm(
+          'Konfirmasi Kehadiran',
+          `Apakah Anda yakin mengambil presensi untuk mata kuliah:\n${matkul}\n\nDosen: ${lecturerName}`,
+          'info'
+        );
+
+        if (confirmed) {
+          window.location.href = url;
+        }
+
+        // Reset setelah selesai
+        setTimeout(() => btn.removeAttribute('data-processed'), 500);
+      });
+
+      // Tombol Tidak Hadir
+      document.querySelectorAll('.btn-absent').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+          const matkul = this.getAttribute('data-matkul');
+          const lecturer = this.getAttribute('data-lecturer');
+
+          if (typeof JayPopup === 'undefined') {
+            console.error('JayPopup tidak tersedia!');
+            return;
+          }
+
+          try {
+            const confirmed = await JayPopup.confirm(
+              'Konfirmasi Ketidakhadiran',
+              `Apakah Anda yakin ingin mengisi status TIDAK HADIR untuk mata kuliah:\n${matkul}\n\nDosen: ${lecturer || '-'}`,
+              'warning'
+            );
+
+            if (confirmed) {
+              window.location.href = '/s/today';
+            }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        });
+      });
+    </script>
+
+    <style>
+      /* Modern SweetAlert dengan Outline Button */
+      .modern-swal {
+        border-radius: 28px !important;
+        padding: 25px !important;
+        font-family: 'Inter', sans-serif !important;
+      }
+
+      /* Tombol YA solid */
+      .btn-success-solid {
+        background: #28a745 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 10px 25px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .btn-success-solid:hover {
+        background: #218838 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
+      }
+
+      /* Tombol YA solid untuk danger */
+      .btn-danger-solid {
+        background: #dc3545 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 10px 25px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .btn-danger-solid:hover {
+        background: #c82333 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+      }
+
+      /* Tombol TIDAK outline */
+      .btn-danger-outline-modern {
+        background: transparent !important;
+        color: #dc3545 !important;
+        border: 2px solid #dc3545 !important;
+        border-radius: 12px !important;
+        padding: 10px 25px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .btn-danger-outline-modern:hover {
+        background: #dc3545 !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2) !important;
+      }
+
+      /* Styling tambahan untuk judul dan konten */
+      .modern-swal .swal2-title {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        color: #2c5a6e !important;
+      }
+
+      .modern-swal .swal2-html-container {
+        font-size: 15px !important;
+        color: #4a5568 !important;
+      }
+
+      .modern-swal .swal2-icon {
+        transform: scale(1.1) !important;
+      }
+    </style>
+    <% }) %>
+    <% } else { %>
+    <div class="no-data">
+      <i class="fas fa-calendar-times"></i>
+      <p>Tidak ada jadwal untuk hari ini</p>
+    </div>
+    <% } %>
+  </div>
+</div>
+</div>
+
+<% } else if (page === 'courses') { %>
+
+<!-- KONTEN MATA KULIAH -->
+<div class="content-card">
+  <h5 class="mb-3">
+    <i class="fas fa-book-open me-2"></i>Daftar Mata Kuliah Semester <%= semester %>
+  </h5>
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Hari</th>
+          <th>Mata Kuliah</th>
+          <th>Dosen</th>
+          <th>SKS</th>
+          <th>Kelas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.forEach((r, index) => { %>
+        <tr class="matkul-row" onclick="window.location.href='/s/courses/<%= r.slug %>'" style="cursor: pointer;">
+          <td><%= index++ +1 %></td>
+          <td>
+            <% const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] 
+              const day = days[r.day]
+            %>
+            <%= day %>
+          </td>
+          <td><%= r.course_name %></td>
+          <td><b><%= r.lecturer_name %>, <%= r.lecturer_degree %></b></td>
+          <% if (r.credits === 1) { %>
+          <td style="color: greenyellow;"><strong><%= r.credits %></strong></td>
+          <% } else if (r.credits === 2) { %>
+          <td style="color: #ffc107;"><strong><%= r.credits %></strong></td>
+          <% } else { %>
+          <td style="color: salmon;"><strong><%= r.credits %></strong></td>
+          <% } %>
+          <% if (r.class_name.includes('Lokal')) { %>
+          <td style="color: rgb(55, 0, 255);"><%= r.class_name %></td>
+          <% } else { %>
+          <td style="color: rgb(124, 27, 0);"><%= r.class_name %></td>
+          <% } %>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert alert-info mt-3 small">
+    <i class="fas fa-info-circle"></i> Klik baris mata kuliah untuk melihat lebih detail.
+  </div>
+</div>
+
+<!-- <script>
+  document.querySelectorAll('.matkul-row').forEach(row => {
+    row.addEventListener('click', function() {
+      const matkul = this.cells[2].innerText;
+      alert(`Menampilkan daftar presensi untuk mata kuliah: ${matkul}`);
+    });
+  });
+</script> -->
+
+<% } else if (page === 'view-attendance') { %>
+
+<!-- KONTEN CEK KEHADIRAN -->
+<div class="content-card">
+  <h5 class="mb-3">
+    <i class="fas fa-chart-line me-2"></i>Cek Kehadiran
+  </h5>
+  <p class="text-muted">Rekap persentase kehadiran per mata kuliah.</p>
+
+  <div class="mb-4">
+    <label class="form-label">Rata-rata Kehadiran</label>
+    <div class="progress">
+      <div class="progress-bar" style="width: 75%;">75%</div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h6 class="mb-3">Detail Kehadiran per Mata Kuliah</h6>
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Mata Kuliah</th>
+          <th>Hadir</th>
+          <th>Tidak Hadir</th>
+          <th>Persentase</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Pemrograman Web</td>
+          <td>12</td>
+          <td>3</td>
+          <td>
+            <div class="progress" style="height: 5px;">
+              <div class="progress-bar" style="width: 80%;"></div>
+            </div>
+            <span class="small">80%</span>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Basis Data</td>
+          <td>10</td>
+          <td>5</td>
+          <td>
+            <div class="progress" style="height: 5px;">
+              <div class="progress-bar" style="width: 67%;"></div>
+            </div>
+            <span class="small">67%</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% } else if (page === 'portal') { %>
+
+<!-- KONTEN PORTAL -->
+<div class="content-card text-center">
+  <i class="fas fa-external-link-alt fa-3x" style="color: #8cb1c2;"></i>
+  <h5 class="mt-3">Portal Jayanusa</h5>
+  <p>Klik tombol di bawah untuk menuju portal resmi kampus.</p>
+  <a href="https://jayanusa.ac.id" target="_blank" class="btn-attend" style="display: inline-block; text-decoration: none; padding: 10px 24px;">
+    Kunjungi Portal <i class="fas fa-arrow-right"></i>
+  </a>
+</div>
+
+<% } else if (page === 'settings') { %>
+
+<!-- KONTEN PENGATURAN -->
+<div class="content-card">
+  <h5 class="mb-3">
+    <i class="fas fa-user-cog me-2"></i>Pengaturan Profile
+  </h5>
+
+  <div class="text-center mb-4">
+    <div class="profile-avatar">
+      <i class="fas fa-user"></i>
+    </div>
+    <button class="btn-attend" id="ubahFotoBtn">Ubah Foto Profil</button>
+  </div>
+
+  <hr>
+
+  <form action="/s/settings/update" method="POST">
+    <div class="mb-3">
+      <label class="form-label">Nama Lengkap</label>
+      <input type="text" class="form-control" value="<%= userInfo.fullname %>" readonly disabled style="background: #f5f5f5;">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Nickname</label>
+      <input type="text" class="form-control" value="<%= userInfo.nickname %>" name="newNickname" id="nickname">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" value="<%= userInfo.email %>" name="newEmail" id="email">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">No. HP</label>
+      <input type="text" class="form-control" value="<%= userInfo.telephone %>" name="newTelephone" id="telp">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Alamat</label>
+      <textarea class="form-control" rows="3" name="newAddress" id="alamat"><%= userInfo.address %></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password Baru</label>
+      <input type="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Konfirmasi Password Baru</label>
+      <input type="password" class="form-control" placeholder="Ketik ulang password baru">
+    </div>
+
+    <button type="submit" class="btn-attend" style="padding: 10px 24px;" id="button-submit">
+      <i class="fas fa-save me-2"></i>Simpan Perubahan
+    </button>
+  </form>
+</div>
+
+<script>
+
+</script>
+
+<% } else if (page === 'help') { %>
+
+<!-- KONTEN BANTUAN -->
+<div class="content-card">
+  <h5 class="mb-3">
+    <i class="fas fa-life-ring me-2"></i>Pusat Bantuan & FAQ
+  </h5>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Bagaimana cara melakukan presensi?
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="faq-answer">
+      <i class="fas fa-reply-all me-2"></i> Jadi... <br> 1. Langkah pertama <%= user.nickname %> harus mengizinkan
+      browser mengakses kamera perangkat agar foto/selfie presensi dapat diambil.
+      Nantinya foto tersebut akan menjadi bukti bahwa apakah <%= user.nickname %> hadir atau tidak hadir.<br>
+      2. Langkah kedua, <%= user.nickname %> masuk ke menu Hari Ini dan nanti akan ada jadwal-jadwal kuliah
+      pada hari tersebut. <br>
+      3. Kemudian jika <%= user.nickname %> hadir, maka klik tombol hadir dan nanti akan diarahkan
+      ke form pengisian presensi dan akan disuruh submit foto selfie. <br> Dan apabila <%= user.nickname %> tidak hadir, maka klik
+      tombol tidak hadir dan nanti juga akan diarahkan ke form pengisian absensi dan juga disuruh
+      submit <i>attachment</i> atau dokumen pendukung absensi seperti surat sakit, surat kerja, surat izin, dll.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Apa yang harus dilakukan jika lupa password?
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="faq-answer">
+      <i class="fas fa-reply-all me-2"></i> Klik 'Lupa password' pada halaman login, lalu ikuti instruksi reset password via email.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Apakah bisa presensi melalui HP?
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="faq-answer">
+      <i class="fas fa-reply-all me-2"></i> Ya, website ini responsive dan dapat diakses melalui HP.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Bagaimana cara melihat riwayat kehadiran?
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="faq-answer">
+      <i class="fas fa-reply-all me-2"></i> Pilih menu 'Cek Kehadiran' untuk melihat rekap presensi per mata kuliah.
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <div class="text-center">
+    <h6><i class="fas fa-headset me-2"></i>Butuh Bantuan Lain?</h6>
+    <p class="small text-muted">
+      Hubungi helpdesk di <strong>helpdesk@jayanusa.ac.id</strong> atau WhatsApp <strong>0812-3456-7890</strong>
+    </p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', function() {
+      const answer = this.nextElementSibling;
+      const icon = this.querySelector('.fa-chevron-down');
+      if (answer.style.display === 'none' || !answer.style.display) {
+        answer.style.display = 'block';
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        answer.style.display = 'none';
+        icon.style.transform = 'rotate(0deg)';
+      }
+    });
+  });
+
+  // Initialize first FAQ answer display
+  document.querySelectorAll('.faq-answer').forEach(answer => {
+    answer.style.display = 'none';
+  });
+</script>
+
+<% } else { %>
+
+<!-- DEFAULT -->
+<div class="content-card text-center">
+  <i class="fas fa-dashboard fa-3x" style="color: #8cb1c2;"></i>
+  <h5 class="mt-3">Selamat Datang di Dashboard</h5>
+  <p>Silakan pilih menu di sidebar.</p>
+</div>
+
+<% } %>

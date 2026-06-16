@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Form Presensi - <%= course_name %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/popup.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .detail-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Card Presensi */
+    .presensi-card {
+      max-width: 480px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      animation: fadeInUp 0.4s ease;
+      position: relative;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Tombol Kembali */
+    .btn-back {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: white;
+    }
+
+    .btn-back:hover {
+      transform: translateX(-2px);
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Header */
+    .card-header-custom {
+      background: linear-gradient(135deg, #2c4a5c 0%, #1e3a4a 100%);
+      color: white;
+      padding: 20px 20px 16px 20px;
+      text-align: center;
+    }
+
+    .card-header-custom h2 {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .card-header-custom p {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin: 0;
+    }
+
+    .date-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      margin-top: 8px;
+    }
+
+    /* Body */
+    .card-body-custom {
+      padding: 20px;
+    }
+
+    /* Info Mata Kuliah */
+    .course-info-mini {
+      background: #e8f4f8;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .course-info-mini span {
+      font-size: 12px;
+      font-weight: 500;
+      color: #2c4a5c;
+    }
+
+    /* Webcam Container */
+    .webcam-container {
+      background: #1a1a2e;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+      aspect-ratio: 4 / 3;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #canvas {
+      display: none;
+    }
+
+    .camera-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background: #1a1a2e;
+    }
+
+    .camera-placeholder i {
+      font-size: 48px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .btn-capture {
+      width: 100%;
+      padding: 10px;
+      background: #2c4a5c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+
+    .btn-capture:hover {
+      background: #1e3a4a;
+      transform: scale(1.02);
+    }
+
+    /* Preview Selfie */
+    /* .selfie-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .selfie-preview img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid #2c4a5c;
+    }
+
+    .selfie-preview .preview-text {
+      font-size: 12px;
+      color: #666;
+    } */
+
+    /* Lokasi Button */
+    .btn-location {
+      width: 100%;
+      padding: 12px;
+      background: #f0f2f5;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+
+    .btn-location.active {
+      background: #e8f4f8;
+      border-color: #2c4a5c;
+      color: #2c4a5c;
+    }
+
+    .btn-location:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Info Lokasi - Style baru untuk alamat */
+    .location-info {
+      background: #e8f4f8;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 12px;
+      color: #2c4a5c;
+      display: none;
+    }
+
+    .location-info.show {
+      display: block;
+    }
+
+    .location-info i {
+      margin-right: 8px;
+      color: #2c4a5c;
+    }
+
+    .location-address {
+      font-weight: 500;
+      margin-top: 5px;
+      padding-left: 24px;
+      color: #333;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2c4a5c 0%, #1e3a4a 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Modal Popup */
+    .modal-custom {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content-custom {
+      background: white;
+      border-radius: 24px;
+      max-width: 320px;
+      width: 90%;
+      padding: 24px;
+      text-align: center;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .modal-content-custom h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .modal-content-custom p {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .step-list {
+      text-align: left;
+      margin: 15px 0;
+    }
+
+    .step-list li {
+      font-size: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-modal {
+      width: 100%;
+      padding: 12px;
+      background: #2c4a5c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    /* Loading text */
+    .loading-text {
+      font-size: 11px;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    /* Tambahkan di dalam tag <style> */
+
+    /* Mirror mode untuk video */
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      /* Mirror effect! */
+    }
+
+    /* Container dengan efek frame kamera */
+    .webcam-container {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border: 3px solid rgba(44, 74, 92, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Overlay efek kamera (bingkai) */
+    .webcam-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2), inset 0 0 0 4px rgba(0, 0, 0, 0.1);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Efek lensa camera di pojok */
+    .webcam-container::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+      z-index: 2;
+      animation: pulseLens 2s infinite;
+    }
+
+    @keyframes pulseLens {
+      0% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(1.05);
+      }
+
+      100% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+    }
+
+    /* Efek grid kamera (seperti viewfinder) */
+    .webcam-container .grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 33.33% 33.33%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Efek animasi shutter */
+    @keyframes shutterFlash {
+      0% {
+        background: rgba(255, 255, 255, 0);
+      }
+
+      50% {
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      100% {
+        background: rgba(255, 255, 255, 0);
+      }
+    }
+
+    .shutter-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0);
+      pointer-events: none;
+      z-index: 10;
+      animation: shutterFlash 0.3s ease-out;
+    }
+
+    /* Tombol kamera dengan efek */
+    .btn-capture {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-capture::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+    }
+
+    .btn-capture:active::before {
+      width: 200%;
+      height: 200%;
+    }
+
+    /* Efek recording dot */
+    .recording-dot {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 4px 10px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      z-index: 3;
+      font-size: 10px;
+      color: white;
+    }
+
+    .recording-dot .dot {
+      width: 8px;
+      height: 8px;
+      background: #ff4444;
+      border-radius: 50%;
+      animation: pulseRed 1.5s infinite;
+    }
+
+    @keyframes pulseRed {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Preview Selfie dengan efek */
+    .selfie-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #f8fafc 0%, #eef2f5 100%);
+      padding: 12px;
+      border-radius: 16px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(44, 74, 92, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .selfie-preview:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .selfie-preview img {
+      width: 65px;
+      height: 65px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 3px solid #2c4a5c;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .selfie-preview .preview-text {
+      font-size: 12px;
+      color: #2c4a5c;
+      font-weight: 500;
+    }
+
+    .selfie-preview .preview-text i {
+      margin-right: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="detail-container">
+    <div class="presensi-card">
+      <a href="javascript:history.back()" class="btn-back" title="Kembali">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <div class="card-header-custom">
+        <h2>Isi data presensi</h2>
+        <p><%= course_name %></p>
+        <div class="date-badge" id="tanggalDisplay">
+          <i class="fas fa-calendar-alt me-1"></i> Memuat tanggal...
+        </div>
+      </div>
+
+      <div class="card-body-custom">
+        <!-- Info Singkat -->
+        <div class="course-info-mini">
+          <span><i class="fas fa-chalkboard-user me-1"></i> <%= lecturer_name %></span>
+          <span><i class="fas fa-clock me-1"></i> Jam: <%= start_time.split(':').slice(0,2).join(':') %> - <%= end_time.split(':').slice(0,2).join(':') %></span>
+        </div>
+
+        <!-- Selfie Area -->
+        <div class="webcam-container" id="webcamContainer">
+          <video id="video" autoplay playsinline></video>
+          <canvas id="canvas"></canvas>
+          <div class="grid-overlay"></div>
+          <div class="recording-dot" id="recordingDot" style="display: none;">
+            <span class="dot"></span>
+            <span>Kamera Aktif</span>
+          </div>
+        </div>
+        <button type="button" class="btn-capture" id="captureBtn">
+          <i class="fas fa-camera me-2"></i> Ambil Selfie
+        </button>
+
+        <!-- Preview Selfie -->
+        <div id="selfiePreviewArea" style="display: none;">
+          <div class="selfie-preview">
+            <img id="selfiePreview" src="" alt="Selfie preview">
+            <div class="preview-text">
+              <i class="fas fa-check-circle" style="color: #4caf50;"></i> Selfie berhasil diambil
+            </div>
+          </div>
+        </div>
+
+        <!-- Konfirmasi Lokasi -->
+        <button type="button" class="btn-location" id="locationBtn">
+          <i class="fas fa-map-marker-alt"></i> Konfirmasi Lokasi
+        </button>
+
+        <!-- Info Lokasi (akan menampilkan alamat) -->
+        <div id="locationInfo" class="location-info">
+          <i class="fas fa-location-dot"></i> <span id="locationStatus">Mendapatkan lokasi...</span>
+          <div id="locationAddress" class="location-address"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="button" class="btn-submit" id="submitBtn" disabled>
+          <i class="fas fa-save me-2"></i> Simpan Presensi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Popup Tata Cara -->
+  <div id="guideModal" class="modal-custom">
+    <div class="modal-content-custom">
+      <i class="fas fa-clipboard-list" style="font-size: 40px; color: #2c4a5c;"></i>
+      <h3>Tata Cara Presensi</h3>
+      <ul class="step-list">
+        <li><i class="fas fa-camera"></i> 1. Ambil selfie terlebih dahulu</li>
+        <li><i class="fas fa-map-marker-alt"></i> 2. Klik "Konfirmasi Lokasi"</li>
+        <li><i class="fas fa-save"></i> 3. Klik "Simpan Presensi"</li>
+      </ul>
+      <p style="font-size: 12px; background: #e8f4f8; padding: 10px; border-radius: 12px;">
+        <i class="fas fa-info-circle"></i> Pastikan kamera dan lokasi aktif untuk presensi yang valid.
+      </p>
+      <button class="btn-modal" id="guideOkBtn">
+        <i class="fas fa-camera me-2"></i> Beri Akses Kamera & Lokasi
+      </button>
+    </div>
+  </div>
+  <script src="/js/popup.js"></script>
+  <script>
+    // ==================== DATA DARI SERVER ====================
+    const courseName = '<%= course_name %>';
+    const lecturerName = '<%= lecturer_name %>';
+    const startTime = '<%= start_time %>';
+    const endTime = '<%= end_time %>';
+    const scheduleId = '<%= id_schedule %>';
+    const nim = '<%= nim %>';
+
+    // ==================== VARIABLES ====================
+    let stream = null;
+    let capturedImage = null;
+    let locationConfirmed = false;
+    let latitude = null;
+    let longitude = null;
+    let locationAddressText = '';
+    let cameraReady = false;
+
+    // DOM Elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const locationBtn = document.getElementById('locationBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const selfiePreviewArea = document.getElementById('selfiePreviewArea');
+    const selfiePreview = document.getElementById('selfiePreview');
+    const locationInfoDiv = document.getElementById('locationInfo');
+    const locationStatusSpan = document.getElementById('locationStatus');
+    const locationAddressDiv = document.getElementById('locationAddress');
+    const tanggalDisplay = document.getElementById('tanggalDisplay');
+    const modal = document.getElementById('guideModal');
+    const guideOkBtn = document.getElementById('guideOkBtn');
+
+    // ==================== TANGGAL DARI SERVER ====================
+    function setServerDate() {
+      const serverDate = '<%= serverDate %>';
+      tanggalDisplay.innerHTML = `<i class="fas fa-calendar-alt me-1"></i> ${serverDate}`;
+    }
+
+    // ==================== REVERSE GEOCODING (Koordinat ke Alamat) ====================
+    async function reverseGeocode(lat, lng) {
+      try {
+        // Menggunakan Nominatim OpenStreetMap (gratis, tanpa API key)
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+          headers: {
+            'Accept-Language': 'id' // Ambil dalam bahasa Indonesia
+          }
+        });
+        const data = await response.json();
+
+        if (data && data.display_name) {
+          // Format alamat menjadi lebih ringkas
+          const address = data.address;
+          let shortAddress = '';
+
+          if (address.road) shortAddress += address.road;
+          if (address.suburb) shortAddress += shortAddress ? ', ' + address.suburb : address.suburb;
+          if (address.city || address.town || address.village) {
+            const city = address.city || address.town || address.village;
+            shortAddress += shortAddress ? ', ' + city : city;
+          }
+          if (address.province) shortAddress += shortAddress ? ', ' + address.province : address.province;
+
+          return shortAddress || data.display_name.split(',')[0];
+        }
+        return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      } catch (error) {
+        console.error('Reverse geocoding error:', error);
+        return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      }
+    }
+
+    // ==================== KAMERA ====================
+    // ==================== KAMERA DENGAN MIRROR MODE & EFEK ====================
+    async function initCamera() {
+      try {
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+
+        // Tambahkan constraint untuk kualitas lebih baik
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: {
+              ideal: 1920,
+              min: 1280
+            },
+            height: {
+              ideal: 1080,
+              min: 720
+            },
+            facingMode: 'user' // Kamera depan
+          }
+        });
+
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          console.log(`Resolusi video: ${video.videoWidth} x ${video.videoHeight}`);
+        };
+        cameraReady = true;
+
+        // Tampilkan recording dot
+        const recordingDot = document.getElementById('recordingDot');
+        if (recordingDot) recordingDot.style.display = 'flex';
+
+        // Opsional: Log bahwa kamera siap
+        console.log('✅ Kamera siap dengan mirror mode');
+
+      } catch (err) {
+        console.error('Camera error:', err);
+        document.getElementById('webcamContainer').innerHTML = `
+      <div class="camera-placeholder">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Gagal mengakses kamera</p>
+        <small>Pastikan izin kamera diberikan</small>
+      </div>
+    `;
+        cameraReady = false;
+      }
+    }
+
+    // Ambil Selfie dengan efek shutter
+    captureBtn.addEventListener('click', () => {
+      if (!cameraReady) {
+        alert('Kamera belum siap. Coba muat ulang halaman.');
+        return;
+      }
+
+      // Efek shutter (flash putih)
+      const container = document.getElementById('webcamContainer');
+      const shutterDiv = document.createElement('div');
+      shutterDiv.className = 'shutter-effect';
+      container.appendChild(shutterDiv);
+
+      // Hapus efek setelah animasi selesai
+      setTimeout(() => {
+        shutterDiv.remove();
+      }, 300);
+
+      // Ambil gambar (perhatikan mirror mode)
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Gambar dari video (sudah mirror dari CSS)
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Opsional: Tambahkan watermark/timestamp
+      context.font = '12px "Segoe UI"';
+      context.fillStyle = 'rgba(255,255,255,0.7)';
+      context.shadowBlur = 0;
+      const dateTime = new Date().toLocaleString('id-ID');
+      context.fillText(dateTime, 10, canvas.height - 10);
+
+      // Gunakan PNG (lossless, tidak ada kompresi)
+      capturedImage = canvas.toDataURL('image/png'); // Kualitas sempurna
+      selfiePreview.src = capturedImage;
+      selfiePreviewArea.style.display = 'block';
+
+      // Efek suara klik (opsional - play beep)
+      // const audio = new Audio('/sounds/shutter.mp3');
+      // audio.play().catch(e => console.log('Audio not supported'));
+
+      checkSubmitReady();
+    });
+
+    // ==================== LOKASI (Dengan Reverse Geocoding) ====================
+    async function getLocation() {
+      if (!navigator.geolocation) {
+        locationStatusSpan.innerHTML = 'Browser tidak mendukung geolokasi';
+        locationInfoDiv.classList.add('show');
+        return;
+      }
+
+      locationBtn.disabled = true;
+      locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendapatkan lokasi...';
+      locationStatusSpan.innerHTML = 'Mendapatkan koordinat...';
+      locationInfoDiv.classList.add('show');
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+
+            locationStatusSpan.innerHTML = '<i class="fas fa-check-circle" style="color: #4caf50;"></i> Lokasi ditemukan! Mengambil alamat...';
+
+            // Reverse geocoding: koordinat -> alamat
+            locationAddressText = await reverseGeocode(latitude, longitude);
+            locationAddressDiv.innerHTML = `<i class="fas fa-map-pin"></i> ${locationAddressText}`;
+            locationStatusSpan.innerHTML = '<i class="fas fa-check-circle" style="color: #4caf50;"></i> Lokasi berhasil dikonfirmasi';
+
+            locationConfirmed = true;
+            locationBtn.classList.add('active');
+            locationBtn.innerHTML = '<i class="fas fa-check-circle"></i> Lokasi Dikonfirmasi';
+
+            checkSubmitReady();
+          },
+          (error) => {
+            let errorMsg = 'Gagal mendapatkan lokasi';
+            if (error.code === 1) errorMsg = 'Izin lokasi ditolak. Berikan akses lokasi.';
+            if (error.code === 2) errorMsg = 'Lokasi tidak tersedia.';
+            if (error.code === 3) errorMsg = 'Timeout mendapatkan lokasi.';
+
+            locationStatusSpan.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #f44336;"></i> ${errorMsg}`;
+            locationAddressDiv.innerHTML = '';
+            locationConfirmed = false;
+            locationBtn.disabled = false;
+            locationBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Konfirmasi Lokasi';
+          }, {
+            enableHighAccuracy: true,
+            timeout: 10000
+          }
+      );
+    }
+
+    locationBtn.addEventListener('click', getLocation);
+
+    // ==================== CEK KELENGKAPAN ====================
+    function checkSubmitReady() {
+      const selfieReady = capturedImage !== null;
+      if (selfieReady && locationConfirmed) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+      }
+    }
+
+    // ==================== SUBMIT PRESENSI ====================
+    // ==================== SUBMIT PRESENSI ====================
+    submitBtn.addEventListener('click', async () => {
+      if (!capturedImage) {
+        alert('Ambil selfie terlebih dahulu!');
+        return;
+      }
+      if (!locationConfirmed) {
+        alert('Konfirmasi lokasi terlebih dahulu!');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Menyimpan...';
+
+      // Konversi base64 ke blob
+      const blob = await (await fetch(capturedImage)).blob();
+      const formData = new FormData();
+      formData.append('id_schedule', scheduleId);
+      formData.append('nim', nim);
+      formData.append('photo', blob, 'selfie.png');
+      formData.append('latitude', latitude);
+      formData.append('longitude', longitude);
+      formData.append('location_address', locationAddressText); // ✅ Kirim alamat ke server
+
+      try {
+        const response = await fetch(`/s/today/present/<%= slug %>/submit`, {
+          method: 'POST',
+          body: formData // FormData akan otomatis mengirim multipart/form-data
+        });
+        const result = await response.json();
+        if (result.success) {
+          await JayPopup.alertSuccess(
+            'Berhasil!',
+            `Anda telah mengambil presensi dengan mata kuliah <%= course_name %>
+            SKS: <%= credits %>
+            Lokasi: <%= class_name %>
+            Dosen: <%= lecturer_name %>, <%= degree %>
+            `
+          );
+          window.location.href = '/s/today'
+        } else {
+          alert('❌ Gagal: ' + (result.message || 'Terjadi kesalahan'));
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Presensi';
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Presensi';
+      }
+    });
+
+    // ==================== MODAL GUIDE ====================
+    function showModal() {
+      modal.style.display = 'flex';
+    }
+
+    guideOkBtn.addEventListener('click', async () => {
+      modal.style.display = 'none';
+      await initCamera();
+      // Tidak langsung getLocation, biar user klik tombol sendiri
+    });
+
+    // ==================== INIT ====================
+    setServerDate();
+    showModal();
+  </script>
+
+</body>
+
+</html>

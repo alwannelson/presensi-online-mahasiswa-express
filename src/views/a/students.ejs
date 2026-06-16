@@ -1,0 +1,735 @@
+<!-- views/a/students.ejs -->
+<div class="page-header">
+  <div class="header-title">
+    <h1><i class="fas fa-user-graduate me-2"></i>Manajemen Mahasiswa</h1>
+    <p>Kelola data mahasiswa, lihat statistik per jurusan, dan cari mahasiswa</p>
+  </div>
+  <button class="btn-add" id="btnAddStudent">
+    <i class="fas fa-plus-circle"></i>
+    <span>Tambah Mahasiswa</span>
+  </button>
+</div>
+
+<!-- Statistik Cards per Jurusan -->
+<div class="stats-row">
+  <div class="stat-card stat-si">
+    <div class="stat-icon">
+      <i class="fas fa-laptop-code"></i>
+    </div>
+    <div class="stat-info">
+      <h3><%= totalSI || 0 %></h3>
+      <p>Sistem Informasi (SI)</p>
+    </div>
+  </div>
+  
+  <div class="stat-card stat-sk">
+    <div class="stat-icon">
+      <i class="fas fa-network-wired"></i>
+    </div>
+    <div class="stat-info">
+      <h3><%= totalSK || 0 %></h3>
+      <p>Sistem Komputer (SK)</p>
+    </div>
+  </div>
+  
+  <div class="stat-card stat-mi">
+    <div class="stat-icon">
+      <i class="fas fa-database"></i>
+    </div>
+    <div class="stat-info">
+      <h3><%= totalMI || 0 %></h3>
+      <p>Manajemen Informatika (MI)</p>
+    </div>
+  </div>
+  
+  <div class="stat-card stat-total">
+    <div class="stat-icon">
+      <i class="fas fa-users"></i>
+    </div>
+    <div class="stat-info">
+      <h3><%= totalStudents || 0 %></h3>
+      <p>Total Mahasiswa</p>
+    </div>
+  </div>
+</div>
+
+<!-- Search Box -->
+<div class="search-section">
+  <div class="search-container">
+    <form method="GET" action="/admin/students" id="searchForm" class="search-form">
+      <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          name="search" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Cari berdasarkan NIM, Nama, Email, atau Nickname..." 
+          value="<%= search || '' %>"
+          autocomplete="off"
+        >
+        <button type="submit" class="search-btn">
+          <i class="fas fa-search"></i> Cari
+        </button>
+        <% if (search) { %>
+          <a href="/admin/students" class="clear-btn">
+            <i class="fas fa-times"></i> Hapus
+          </a>
+        <% } %>
+      </div>
+    </form>
+  </div>
+  
+  <% if (search) { %>
+    <div class="search-info">
+      <i class="fas fa-info-circle"></i>
+      Menampilkan hasil pencarian untuk: <strong>"<%= search %>"</strong>
+      <span class="search-count">(Ditemukan <%= students.length %> data)</span>
+    </div>
+  <% } %>
+</div>
+
+<!-- Tabel Mahasiswa -->
+<div class="table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th width="5%">No</th>
+        <th width="10%">NIM</th>
+        <th width="20%">Nama Lengkap</th>
+        <th width="12%">Nickname</th>
+        <th width="18%">Email</th>
+        <th width="12%">Jurusan</th>
+        <th width="10%">Telepon</th>
+        <th width="8%">Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (students && students.length > 0) { %>
+        <% students.forEach((student, index) => { %>
+          <tr>
+            <td><%= (currentPage - 1) * limit + index + 1 %></td>
+            <td class="nim-cell"><strong><%= student.nim %></strong></td>
+            <td>
+              <div class="student-name">
+                <div class="name-avatar">
+                  <%= student.fullname ? student.fullname.charAt(0).toUpperCase() : '?' %>
+                </div>
+                <span><%= student.fullname || '-' %></span>
+              </div>
+            </td>
+            <td><%= student.nickname || '-' %></td>
+            <td class="email-cell"><%= student.email || '-' %></td>
+            <td>
+              <span class="major-badge major-<%= getMajorClass(student.major) %>">
+                <%= student.major || '-' %>
+              </span>
+            </td>
+            <td><%= student.telephone || '-' %></td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn btn-view" onclick="viewStudent('<%= student.nim %>')" title="Lihat Detail">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn btn-edit" onclick="editStudent('<%= student.nim %>')" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn btn-delete" onclick="deleteStudent('<%= student.nim %>', '<%= student.fullname %>')" title="Hapus">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="8" class="empty-state">
+            <i class="fas fa-user-graduate"></i>
+            <p>Belum ada data mahasiswa</p>
+            <% if (search) { %>
+              <p class="empty-subtitle">Tidak ada hasil untuk pencarian "<strong><%= search %></strong>"</p>
+            <% } %>
+            <button class="btn-add-small" onclick="document.getElementById('btnAddStudent').click()">
+              <i class="fas fa-plus"></i>
+              Tambah Mahasiswa
+            </button>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<% if (totalPages > 1) { %>
+<div class="pagination">
+  <button class="page-btn" onclick="changePage(<%= currentPage - 1 %>)" <%= currentPage === 1 ? 'disabled' : '' %>>
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  
+  <% 
+    let startPage = Math.max(1, currentPage - 2)
+    let endPage = Math.min(totalPages, currentPage + 2)
+    
+    if (startPage > 1) { %>
+      <button class="page-btn" onclick="changePage(1)">1</button>
+      <% if (startPage > 2) { %>
+        <span class="page-dots">...</span>
+      <% } %>
+  <% } %>
+  
+  <% for (let i = startPage; i <= endPage; i++) { %>
+    <button class="page-btn <%= i === currentPage ? 'active' : '' %>" onclick="changePage(<%= i %>)">
+      <%= i %>
+    </button>
+  <% } %>
+  
+  <% if (endPage < totalPages) { %>
+    <% if (endPage < totalPages - 1) { %>
+      <span class="page-dots">...</span>
+    <% } %>
+    <button class="page-btn" onclick="changePage(<%= totalPages %>)"><%= totalPages %></button>
+  <% } %>
+  
+  <button class="page-btn" onclick="changePage(<%= currentPage + 1 %>)" <%= currentPage === totalPages ? 'disabled' : '' %>>
+    <i class="fas fa-chevron-right"></i>
+  </button>
+</div>
+<% } %>
+
+<!-- Helper Function untuk Class Major Badge -->
+<% 
+  function getMajorClass(major) {
+    if (!major) return 'other';
+    const m = major.toLowerCase();
+    if (m.includes('sistem informasi') || m === 'si') return 'si';
+    if (m.includes('sistem komputer') || m === 'sk') return 'sk';
+    if (m.includes('manajemen informatika') || m === 'mi') return 'mi';
+    return 'other';
+  }
+%>
+
+<style>
+  /* ========== PAGE HEADER ========== */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .header-title h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 5px 0;
+  }
+  
+  .header-title p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  .btn-add {
+    background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 90, 110, 0.3);
+  }
+  
+  /* ========== STATS CARDS ========== */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+  }
+  
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+  }
+  
+  .stat-si::before { background: linear-gradient(180deg, #667eea, #764ba2); }
+  .stat-sk::before { background: linear-gradient(180deg, #28a745, #20c997); }
+  .stat-mi::before { background: linear-gradient(180deg, #ffc107, #fd7e14); }
+  .stat-total::before { background: linear-gradient(180deg, #8cb1c2, #2c5a6e); }
+  
+  .stat-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  
+  .stat-si .stat-icon { background: rgba(102, 126, 234, 0.15); color: #667eea; }
+  .stat-sk .stat-icon { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+  .stat-mi .stat-icon { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+  .stat-total .stat-icon { background: rgba(44, 90, 110, 0.15); color: #2c5a6e; }
+  
+  .stat-info h3 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 5px 0;
+  }
+  
+  .stat-info p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  /* ========== SEARCH SECTION ========== */
+  .search-section {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .search-form {
+    width: 100%;
+  }
+  
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .search-icon {
+    position: relative;
+    left: 35px;
+    color: #8ba0b0;
+    font-size: 14px;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 12px 16px 12px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.2s ease;
+    min-width: 200px;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #8cb1c2;
+    box-shadow: 0 0 0 3px rgba(140, 177, 194, 0.2);
+  }
+  
+  .search-btn {
+    background: linear-gradient(135deg, #8cb1c2, #2c5a6e);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 14px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 90, 110, 0.3);
+  }
+  
+  .clear-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 12px 20px;
+    border-radius: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .clear-btn:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+  }
+  
+  .search-info {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: rgba(140, 177, 194, 0.1);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .search-count {
+    margin-left: auto;
+    font-weight: 600;
+    color: #2c5a6e;
+  }
+  
+  /* ========== TABLE ========== */
+  .table-container {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+  }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  
+  .data-table th {
+    padding: 15px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: rgba(140, 177, 194, 0.08);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .data-table td {
+    padding: 12px 15px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .data-table tr:hover {
+    background: rgba(140, 177, 194, 0.05);
+  }
+  
+  .nim-cell {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  .student-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .name-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #8cb1c2, #2c5a6e);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  
+  .email-cell {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Major Badges */
+  .major-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  
+  .major-si {
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+  }
+  
+  .major-sk {
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+  }
+  
+  .major-mi {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+  }
+  
+  .major-other {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+  }
+  
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-view { background: rgba(23, 162, 184, 0.15); color: #17a2b8; }
+  .btn-view:hover { background: #17a2b8; color: white; transform: scale(1.05); }
+  
+  .btn-edit { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+  .btn-edit:hover { background: #ffc107; color: white; transform: scale(1.05); }
+  
+  .btn-delete { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+  .btn-delete:hover { background: #dc3545; color: white; transform: scale(1.05); }
+  
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 50px !important;
+  }
+  
+  .empty-state i {
+    font-size: 50px;
+    color: #dee2e6;
+    margin-bottom: 15px;
+  }
+  
+  .empty-state p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  
+  .empty-subtitle {
+    font-size: 13px;
+    margin-bottom: 15px !important;
+  }
+  
+  .btn-add-small {
+    background: linear-gradient(135deg, #8cb1c2, #2c5a6e);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 25px;
+  }
+  
+  .page-btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  
+  .page-btn:hover:not(:disabled) {
+    border-color: #8cb1c2;
+    color: #8cb1c2;
+  }
+  
+  .page-btn.active {
+    background: linear-gradient(135deg, #8cb1c2, #2c5a6e);
+    border-color: transparent;
+    color: white;
+  }
+  
+  .page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .page-dots {
+    padding: 0 8px;
+    color: var(--text-secondary);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .search-wrapper {
+      flex-direction: column;
+    }
+    
+    .search-input {
+      width: 100%;
+    }
+    
+    .search-btn, .clear-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .search-info {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .search-count {
+      margin-left: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .stats-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Fungsi untuk pindah halaman
+  function changePage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page);
+    window.location.href = `/admin/students?${urlParams.toString()}`;
+  }
+  
+  // Fungsi untuk lihat detail
+  function viewStudent(nim) {
+    window.location.href = `/admin/students/${nim}`;
+  }
+  
+  // Fungsi untuk edit
+  function editStudent(nim) {
+    window.location.href = `/admin/students/${nim}/edit`;
+  }
+  
+  // Fungsi untuk delete dengan konfirmasi
+  function deleteStudent(nim, name) {
+    Swal.fire({
+      title: 'Hapus Mahasiswa?',
+      html: `Apakah Anda yakin ingin menghapus <strong>${name}</strong>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/admin/students/${nim}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire('Terhapus!', 'Mahasiswa berhasil dihapus', 'success')
+              .then(() => window.location.reload());
+          } else {
+            Swal.fire('Gagal!', data.message, 'error');
+          }
+        })
+        .catch(() => {
+          Swal.fire('Error!', 'Terjadi kesalahan server', 'error');
+        });
+      }
+    });
+  }
+  
+  // Auto submit search dengan debounce
+  let debounceTimer;
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('keyup', function(e) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (this.value.length >= 3 || this.value.length === 0) {
+          document.getElementById('searchForm').submit();
+        }
+      }, 500);
+    });
+  }
+  
+  // Tombol tambah mahasiswa
+  document.getElementById('btnAddStudent')?.addEventListener('click', () => {
+    window.location.href = '/admin/students/add';
+  });
+</script>

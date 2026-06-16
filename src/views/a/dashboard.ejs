@@ -1,0 +1,293 @@
+<!-- dashboard.ejs - Simple Admin Dashboard -->
+<%
+  // Data statistik sederhana
+  const stats = {
+    mahasiswa: 1250,
+    dosen: 85,
+    matakuliah: 45,
+    presensi: 892
+  };
+%>
+
+<!-- Welcome Banner -->
+<div class="welcome-banner">
+  <h2>Halo, <%= user?.fullname %>!</h2>
+  <p>Selamat datang di Dashboard Akademik Japre</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div>
+      <h3><%= amount.students %></h3>
+      <p>Mahasiswa</p>
+    </div>
+    <i class="fas fa-users"></i>
+  </div>
+
+  <div class="stat-card">
+    <div>
+      <h3><%= amount.lecturers %></h3>
+      <p>Dosen</p>
+    </div>
+    <i class="fas fa-chalkboard-user"></i>
+  </div>
+
+  <div class="stat-card">
+    <div>
+      <h3><%= amount.courses %></h3>
+      <p>Mata Kuliah</p>
+    </div>
+    <i class="fas fa-book"></i>
+  </div>
+
+  <div class="stat-card">
+    <div>
+      <h3><%= 0 || 0 %></h3>
+      <p>Mail</p>
+    </div>
+    <div class="icon-wrapper">
+      <i class="fas fa-envelope"></i>
+      <% if (2 > 0) { %>
+      <span class="notification-badge"></span>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<!-- Menu Cepat -->
+<div class="menu-grid">
+  <a href="/admin/mahasiswa" class="menu-card">
+    <i class="fas fa-user-graduate"></i>
+    <span>Kelola Mahasiswa</span>
+  </a>
+
+  <a href="/admin/dosen" class="menu-card">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Kelola Dosen</span>
+  </a>
+
+  <a href="/admin/matakuliah" class="menu-card">
+    <i class="fas fa-book"></i>
+    <span>Kelola Matakuliah</span>
+  </a>
+
+  <a href="/admin/jadwal" class="menu-card">
+    <i class="fas fa-calendar-alt"></i>
+    <span>Kelola Jadwal</span>
+  </a>
+
+  <a href="/admin/presensi" class="menu-card">
+    <i class="fas fa-fingerprint"></i>
+    <span>Rekap Presensi</span>
+  </a>
+
+  <a href="/admin/laporan" class="menu-card">
+    <i class="fas fa-file-alt"></i>
+    <span>Laporan</span>
+  </a>
+</div>
+
+<style>
+  /* Simple Dashboard Styles */
+
+  /* Wrapper untuk icon dengan badge */
+  .icon-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  /* Badge notifikasi merah */
+  .notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    width: 12px;
+    height: 12px;
+    background-color: #dc3545;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  /* Animasi berdenyut */
+  @keyframes pulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.2);
+      opacity: 0.8;
+    }
+  }
+
+  /* Welcome Banner */
+  .welcome-banner {
+    background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
+    border-radius: 20px;
+    padding: 25px 20px;
+    margin-bottom: 25px;
+    color: white;
+  }
+
+  .welcome-banner h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .welcome-banner p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .stat-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 5px 0;
+  }
+
+  .stat-card p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .stat-card i {
+    font-size: 32px;
+    color: #8cb1c2;
+    opacity: 0.7;
+  }
+
+  /* Menu Grid */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .menu-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px 15px;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .menu-card:hover {
+    transform: translateY(-3px);
+    border-color: #8cb1c2;
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .menu-card i {
+    font-size: 28px;
+    color: #8cb1c2;
+  }
+
+  .menu-card span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .stat-card h3 {
+      font-size: 20px;
+    }
+
+    .stat-card i {
+      font-size: 28px;
+    }
+
+    .menu-card {
+      padding: 15px 10px;
+    }
+
+    .menu-card i {
+      font-size: 24px;
+    }
+
+    .menu-card span {
+      font-size: 12px;
+    }
+
+    .welcome-banner {
+      padding: 20px 15px;
+    }
+
+    .welcome-banner h2 {
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      gap: 10px;
+    }
+
+    .stat-card {
+      padding: 12px;
+    }
+
+    .stat-card h3 {
+      font-size: 18px;
+    }
+
+    .menu-grid {
+      gap: 8px;
+    }
+
+    .menu-card {
+      padding: 12px 8px;
+    }
+  }
+</style>
