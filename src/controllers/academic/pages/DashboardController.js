@@ -8,13 +8,14 @@ exports.getDashboard = async (req, res) => {
             `SELECT * FROM academic WHERE nip = ?`,
             [nip]
         )
+        const today = new Date().getDay()
         const [amountStudents] = await db.execute(
             `SELECT 
                 (SELECT COUNT(*) FROM students) AS students,
                 (SELECT COUNT(*) FROM lecturers) AS lecturers,
                 (SELECT COUNT(*) FROM courses) AS courses,
-                (SELECT COUNT(*) FROM attendance) AS attendance   
-            `
+                (SELECT COUNT(*) FROM schedules WHERE day = ?) AS schedules
+            `, [today]
         )
         const amount = amountStudents[0]
         const user = rows[0]

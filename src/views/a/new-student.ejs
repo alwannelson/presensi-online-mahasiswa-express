@@ -1,0 +1,1054 @@
+<style>
+  /* ========== STYLING YANG SAMA DENGAN STUDENTS.EJS ========== */
+
+  /* Card styling dengan shadow lebih halus */
+  .form-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
+    padding: 24px;
+  }
+
+  .form-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Form control styling */
+  .form-control {
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  .form-control:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+  }
+
+  .form-control::placeholder {
+    color: #9ca3af;
+    font-size: 13px;
+  }
+
+  .form-control.is-invalid {
+    border-color: #ef4444;
+  }
+
+  .form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+
+  .form-control.is-valid {
+    border-color: #10b981;
+  }
+
+  .form-control.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+
+  /* ========== CUSTOM SELECT ========== */
+  .custom-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .custom-select-wrapper .custom-select-trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1f2937;
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-height: 46px;
+  }
+
+  .custom-select-wrapper .custom-select-trigger:hover {
+    border-color: #9ca3af;
+  }
+
+  .custom-select-wrapper .custom-select-trigger:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+    outline: none;
+  }
+
+  .custom-select-wrapper .custom-select-trigger .selected-value {
+    flex: 1;
+    color: #1f2937;
+  }
+
+  .custom-select-wrapper .custom-select-trigger .selected-value.placeholder {
+    color: #9ca3af;
+  }
+
+  .custom-select-wrapper .custom-select-trigger .select-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+    color: #6b7280;
+    font-size: 20px;
+  }
+
+  .custom-select-wrapper .custom-select-trigger .select-arrow.open {
+    transform: rotate(180deg);
+  }
+
+  .custom-select-wrapper .custom-select-trigger.is-invalid {
+    border-color: #ef4444;
+  }
+
+  .custom-select-wrapper .custom-select-trigger.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+
+  .custom-select-wrapper .custom-select-trigger.is-valid {
+    border-color: #10b981;
+  }
+
+  .custom-select-wrapper .custom-select-trigger.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+
+  /* Dropdown options */
+  .custom-select-wrapper .custom-select-options {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    max-height: 200px;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1050;
+    padding: 4px;
+  }
+
+  .custom-select-wrapper .custom-select-options.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item {
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #1f2937;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item:hover {
+    background-color: #f3f4f6;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item.active {
+    background-color: #f3f4f6;
+    color: #111827;
+    font-weight: 500;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item.selected {
+    background-color: #111827;
+    color: #ffffff;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item.selected:hover {
+    background-color: #1f2937;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item .option-icon {
+    font-size: 16px;
+    color: #6b7280;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item.selected .option-icon {
+    color: #ffffff;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item .option-check {
+    margin-left: auto;
+    color: #111827;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .custom-select-wrapper .custom-select-options .option-item.selected .option-check {
+    opacity: 1;
+    color: #ffffff;
+  }
+
+  /* Scrollbar styling */
+  .custom-select-wrapper .custom-select-options::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-select-wrapper .custom-select-options::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 10px;
+  }
+
+  .custom-select-wrapper .custom-select-options::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+  }
+
+  .custom-select-wrapper .custom-select-options::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  /* Label styling */
+  .form-label {
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 6px;
+    font-size: 13px;
+    display: block;
+  }
+
+  .form-label .required {
+    color: #ef4444;
+    margin-left: 2px;
+  }
+
+  /* Tombol header */
+  .btn-back {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-back:hover {
+    background: #e5e7eb;
+    transform: scale(1.05);
+  }
+
+  .btn-back i {
+    font-size: 20px;
+    color: #374151;
+  }
+
+  /* Tombol Submit */
+  .btn-submit {
+    background-color: #111827;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 32px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    min-width: 120px;
+  }
+
+  .btn-submit:hover {
+    background-color: #1f2937;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2);
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-submit i {
+    margin-right: 6px;
+  }
+
+  .btn-cancel {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-cancel:hover {
+    background-color: #e5e7eb;
+    color: #1f2937;
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+
+  /* Flash Messages */
+  .alert {
+    border-radius: 12px;
+    border: none;
+    padding: 14px 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideDown 0.4s ease-out;
+  }
+
+  .alert-success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+  }
+
+  .alert-danger {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+  }
+
+  .alert i {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .alert .alert-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    padding: 0 4px;
+  }
+
+  .alert .alert-close:hover {
+    opacity: 1;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Info box */
+  .info-box {
+    background-color: #f9fafb;
+    border-radius: 12px;
+    padding: 16px 20px;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .info-box i {
+    font-size: 18px;
+    color: #9ca3af;
+    margin-top: 1px;
+  }
+
+  /* ========== RESPONSIVE ========== */
+
+  /* Tablet (768px - 991px) */
+  @media (max-width: 991px) {
+    .form-card {
+      padding: 20px;
+    }
+
+    .form-control,
+    .custom-select-wrapper .custom-select-trigger {
+      font-size: 13px;
+      padding: 8px 12px;
+    }
+
+    .custom-select-wrapper .custom-select-options .option-item {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+
+  /* Mobile (576px - 767px) */
+  @media (max-width: 767px) {
+    .form-card {
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .form-card h2 {
+      font-size: 16px;
+    }
+
+    .form-control,
+    .custom-select-wrapper .custom-select-trigger {
+      font-size: 13px;
+      padding: 8px 12px;
+      min-height: 42px;
+    }
+
+    .form-label {
+      font-size: 12px;
+    }
+
+    .btn-back {
+      width: 36px;
+      height: 36px;
+    }
+
+    .btn-back i {
+      font-size: 18px;
+    }
+
+    h1.fs-4 {
+      font-size: 18px !important;
+    }
+
+    /* Stack tombol di mobile */
+    .d-flex.gap-2 {
+      flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+      width: 100%;
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    .btn-submit {
+      min-width: unset;
+    }
+
+    .alert {
+      font-size: 13px;
+      padding: 12px 16px;
+      border-radius: 10px;
+    }
+
+    .alert i {
+      font-size: 18px;
+    }
+
+    .custom-select-wrapper .custom-select-options .option-item {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+
+  /* Mobile Kecil (< 576px) */
+  @media (max-width: 575px) {
+    .form-card {
+      padding: 14px;
+      border-radius: 10px;
+    }
+
+    .form-control,
+    .custom-select-wrapper .custom-select-trigger {
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      min-height: 38px;
+    }
+
+    .form-label {
+      font-size: 11px;
+    }
+
+    .btn-back {
+      width: 32px;
+      height: 32px;
+    }
+
+    .btn-back i {
+      font-size: 16px;
+    }
+
+    h1.fs-4 {
+      font-size: 16px !important;
+    }
+
+    .alert {
+      font-size: 12px;
+      padding: 10px 14px;
+    }
+
+    .info-box {
+      font-size: 12px;
+      padding: 12px 16px;
+    }
+
+    .custom-select-wrapper .custom-select-options .option-item {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .custom-select-wrapper .custom-select-options {
+      max-height: 160px;
+    }
+  }
+
+  /* Touch-friendly untuk mobile */
+  @media (hover: none) and (pointer: coarse) {
+    .btn-back:hover {
+      transform: none;
+    }
+
+    .btn-submit:hover {
+      transform: none;
+    }
+
+    .btn-cancel:hover {
+      transform: none;
+    }
+
+    .custom-select-wrapper .custom-select-options .option-item:hover {
+      background-color: transparent;
+    }
+
+    .custom-select-wrapper .custom-select-options .option-item.selected:hover {
+      background-color: #111827;
+    }
+  }
+</style>
+
+<!-- ===== HEADER ===== -->
+<div class="d-flex align-items-center mb-4">
+  <a href="/a/students" class="btn-back me-3">
+    <i class='bx bx-arrow-back'></i>
+  </a>
+  <h1 class="fs-4 fw-bold mb-0">Tambah Mahasiswa</h1>
+</div>
+
+<!-- ===== FLASH MESSAGES ===== -->
+<!-- ===== FLASH SUCCESS ===== -->
+<% if (success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class='bx bx-check-circle'></i>
+  <span><%= success %></span>
+  <button type="button" class="alert-close" data-dismiss="alert" aria-label="Close">
+    <i class='bx bx-x'></i>
+  </button>
+</div>
+<% } %>
+
+<!-- ===== FLASH ERROR GLOBAL ===== -->
+<% if (error && typeof error === 'string') { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class='bx bx-error-circle'></i>
+  <span><%= error %></span>
+  <button type="button" class="alert-close" data-dismiss="alert" aria-label="Close">
+    <i class='bx bx-x'></i>
+  </button>
+</div>
+<% } %>
+
+<!-- ===== ERROR OBJECT (Multiple Errors) ===== -->
+<% if (error && typeof error === 'object' && !Array.isArray(error)) { 
+    // Kumpulkan semua pesan error
+    let errorMessages = [];
+    if (error.general) errorMessages.push(error.general);
+    if (error.nim) errorMessages.push(error.nim);
+    if (error.fullname) errorMessages.push(error.fullname);
+    if (error.password) errorMessages.push(error.password);
+    if (error.major) errorMessages.push(error.major);
+    if (error.address) errorMessages.push(error.address);
+    if (error.email) errorMessages.push(error.email);
+%>
+<% if (errorMessages.length > 0) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class='bx bx-error-circle'></i>
+  <div>
+    <strong>Silakan perbaiki kesalahan berikut:</strong>
+    <ul style="margin: 4px 0 0 0; padding-left: 20px;">
+      <% errorMessages.forEach(function(msg) { %>
+      <li><%= msg %></li>
+      <% }); %>
+    </ul>
+  </div>
+  <button type="button" class="alert-close" data-dismiss="alert" aria-label="Close">
+    <i class='bx bx-x'></i>
+  </button>
+</div>
+<% } %>
+<% } %>
+
+<!-- ===== FLASH MESSAGES DARI req.flash() ===== -->
+<% if (messages && messages.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class='bx bx-check-circle'></i>
+  <span><%= messages.success %></span>
+  <button type="button" class="alert-close" data-dismiss="alert" aria-label="Close">
+    <i class='bx bx-x'></i>
+  </button>
+</div>
+<% } %>
+
+<% if (messages && messages.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class='bx bx-error-circle'></i>
+  <span><%= messages.error %></span>
+  <button type="button" class="alert-close" data-dismiss="alert" aria-label="Close">
+    <i class='bx bx-x'></i>
+  </button>
+</div>
+<% } %>
+
+<!-- ===== FORM CARD ===== -->
+<div class="form-card">
+  <h2 class="fs-6 fw-bold mb-4">
+    <i class='bx bx-user-plus me-2'></i>Form Tambah Mahasiswa
+  </h2>
+
+  <form action="/a/students/new-student" method="POST" id="studentForm" novalidate>
+    <!-- NIM -->
+    <div class="mb-3">
+      <label for="nim" class="form-label">
+        NIM <span class="required">*</span>
+      </label>
+      <input type="text" name="nim" id="nim" class="form-control <%= error && error.nim ? 'is-invalid' : '' %>" placeholder="Masukkan NIM (contoh: 20260101)" value="<%= oldInput && oldInput.nim ? oldInput.nim : '' %>" required maxlength="20" autofocus>
+      <% if (error && error.nim) { %>
+      <div class="invalid-feedback d-block">
+        <i class='bx bx-error-circle me-1'></i><%= error.nim %>
+      </div>
+      <% } %>
+      <div class="form-text text-muted" style="font-size: 12px;">
+        <i class='bx bx-info-circle'></i> NIM harus unik dan tidak boleh kosong
+      </div>
+    </div>
+
+    <!-- Nama Lengkap -->
+    <div class="mb-3">
+      <label for="fullname" class="form-label">
+        Nama Lengkap <span class="required">*</span>
+      </label>
+      <input type="text" name="fullname" id="fullname" class="form-control <%= error && error.fullname ? 'is-invalid' : '' %>" placeholder="Masukkan nama lengkap mahasiswa" value="<%= oldInput && oldInput.fullname ? oldInput.fullname : '' %>" required>
+      <% if (error && error.fullname) { %>
+      <div class="invalid-feedback d-block">
+        <i class='bx bx-error-circle me-1'></i><%= error.fullname %>
+      </div>
+      <% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">
+        Password <span class="required">*</span>
+      </label>
+      <input type="password" name="password" id="fullname" class="form-control <%= error && error.password ? 'is-invalid' : '' %>" placeholder="Masukkan password" value="<%= oldInput && oldInput.password ? oldInput.password : '' %>" required>
+      <% if (error && error.password) { %>
+      <div class="invalid-feedback d-block">
+        <i class='bx bx-error-circle me-1'></i><%= error.password %>
+      </div>
+      <% } %>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label">
+        Jurusan <span class="required">*</span>
+      </label>
+
+      <!-- Hidden input untuk value -->
+      <input type="hidden" name="major" id="majorHidden" value="<%= oldInput && oldInput.major ? oldInput.major : '' %>">
+
+      <!-- Custom Select -->
+      <div class="custom-select-wrapper" id="customSelectWrapper">
+        <div class="custom-select-trigger <%= error && error.major ? 'is-invalid' : '' %>" id="customSelectTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="selected-value placeholder" id="selectedValue">
+            <i class='bx bx-book-open me-2'></i>Pilih Jurusan
+          </span>
+          <span class="select-arrow" id="selectArrow">
+            <i class='bx bx-chevron-down'></i>
+          </span>
+        </div>
+
+        <div class="custom-select-options" id="customSelectOptions" role="listbox">
+          <div class="option-item" data-value="" role="option" aria-selected="false">
+            <span class="option-icon"><i class='bx bx-book-open'></i></span>
+            -- Pilih Jurusan --
+            <span class="option-check"><i class='bx bx-check'></i></span>
+          </div>
+          <div class="option-item" data-value="SI" role="option" aria-selected="false">
+            <span class="option-icon"><i class='bx bx-code-alt'></i></span>
+            Sistem Informasi
+            <span class="option-check"><i class='bx bx-check'></i></span>
+          </div>
+          <div class="option-item" data-value="SK" role="option" aria-selected="false">
+            <span class="option-icon"><i class='bx bx-desktop'></i></span>
+            Sistem Komputer
+            <span class="option-check"><i class='bx bx-check'></i></span>
+          </div>
+          <div class="option-item" data-value="MI" role="option" aria-selected="false">
+            <span class="option-icon"><i class='bx bx-stats'></i></span>
+            Manajemen Informatika
+            <span class="option-check"><i class='bx bx-check'></i></span>
+          </div>
+        </div>
+      </div>
+
+      <% if (error && error.major) { %>
+      <div class="invalid-feedback d-block" style="margin-top: 6px;">
+        <i class='bx bx-error-circle me-1'></i><%= error.major %>
+      </div>
+      <% } %>
+      <div class="form-text text-muted" style="font-size: 12px; margin-top: 6px;">
+        <i class='bx bx-info-circle'></i> Pilih jurusan mahasiswa
+      </div>
+    </div>
+
+    <!-- Alamat -->
+    <div class="mb-3">
+      <label for="address" class="form-label">
+        Alamat <span class="required">*</span>
+      </label>
+      <textarea name="address" id="address" class="form-control <%= error && error.address ? 'is-invalid' : '' %>" placeholder="Masukkan alamat lengkap mahasiswa" rows="3" required><%= oldInput && oldInput.address ? oldInput.address : '' %></textarea>
+      <% if (error && error.address) { %>
+      <div class="invalid-feedback d-block">
+        <i class='bx bx-error-circle me-1'></i><%= error.address %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">
+        Email <span class="required">*</span>
+      </label>
+      <input type="email" name="email" id="email" class="form-control <%= error && error.email ? 'is-invalid' : '' %>" placeholder="Masukkan email mahasiswa (contoh: student@email.com)" value="<%= oldInput && oldInput.email ? oldInput.email : '' %>" required>
+      <% if (error && error.email) { %>
+      <div class="invalid-feedback d-block">
+        <i class='bx bx-error-circle me-1'></i><%= error.email %>
+      </div>
+      <% } %>
+      <div class="form-text text-muted" style="font-size: 12px;">
+        <i class='bx bx-info-circle'></i> Email harus unik dan format valid
+      </div>
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="d-flex gap-2 justify-content-end">
+      <a href="/a/students" class="btn-cancel">
+        <i class='bx bx-x me-1'></i> Batal
+      </a>
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <i class='bx bx-save'></i> Simpan
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+  (function() {
+    'use strict';
+
+    // ===== CUSTOM SELECT =====
+    const selectWrapper = document.getElementById('customSelectWrapper');
+    const selectTrigger = document.getElementById('customSelectTrigger');
+    const selectOptions = document.getElementById('customSelectOptions');
+    const selectedValue = document.getElementById('selectedValue');
+    const selectArrow = document.getElementById('selectArrow');
+    const majorHidden = document.getElementById('majorHidden');
+    const options = selectOptions.querySelectorAll('.option-item');
+
+    let isOpen = false;
+    let selectedOption = null;
+    const initialValue = majorHidden.value;
+    if (initialValue) {
+      options.forEach(opt => {
+        if (opt.dataset.value === initialValue) {
+          selectOption(opt);
+        }
+      });
+    }
+
+    // Toggle dropdown
+    function toggleDropdown(open) {
+      isOpen = typeof open !== 'undefined' ? open : !isOpen;
+
+      if (isOpen) {
+        selectOptions.classList.add('open');
+        selectTrigger.setAttribute('aria-expanded', 'true');
+        selectArrow.classList.add('open');
+      } else {
+        selectOptions.classList.remove('open');
+        selectTrigger.setAttribute('aria-expanded', 'false');
+        selectArrow.classList.remove('open');
+      }
+    }
+
+    // Select option
+    function selectOption(option) {
+      // Remove selected from all
+      options.forEach(opt => {
+        opt.classList.remove('selected');
+        opt.setAttribute('aria-selected', 'false');
+      });
+
+      // Add selected to clicked
+      option.classList.add('selected');
+      option.setAttribute('aria-selected', 'true');
+      selectedOption = option;
+
+      // Update trigger text
+      const value = option.dataset.value;
+      const text = option.textContent.trim();
+      selectedValue.textContent = text;
+      selectedValue.classList.remove('placeholder');
+
+      // Update hidden input
+      majorHidden.value = value;
+
+      // Remove invalid state
+      selectTrigger.classList.remove('is-invalid');
+      selectTrigger.classList.add('is-valid');
+
+      // Close dropdown
+      toggleDropdown(false);
+    }
+
+    // Click on trigger
+    selectTrigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    // Keyboard support
+    selectTrigger.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleDropdown();
+      }
+      if (e.key === 'Escape') {
+        toggleDropdown(false);
+        selectTrigger.focus();
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!isOpen) toggleDropdown(true);
+
+        const currentIndex = Array.from(options).indexOf(selectedOption);
+        let newIndex = e.key === 'ArrowDown' ?
+          Math.min(currentIndex + 1, options.length - 1) :
+          Math.max(currentIndex - 1, 0);
+
+        if (currentIndex === -1) newIndex = 0;
+        options[newIndex].focus();
+        options[newIndex].scrollIntoView({
+          block: 'nearest'
+        });
+      }
+    });
+
+    // Click on option
+    options.forEach(option => {
+      option.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (this.dataset.value === '') {
+          // Reset selection
+          options.forEach(opt => {
+            opt.classList.remove('selected');
+            opt.setAttribute('aria-selected', 'false');
+          });
+          selectedValue.innerHTML = `<i class='bx bx-book-open me-2'></i>Pilih Jurusan`;
+          selectedValue.classList.add('placeholder');
+          majorHidden.value = '';
+          selectTrigger.classList.remove('is-valid');
+          selectedOption = null;
+          toggleDropdown(false);
+          return;
+        }
+        selectOption(this);
+      });
+
+      // Keyboard support for options
+      option.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+        if (e.key === 'Escape') {
+          toggleDropdown(false);
+          selectTrigger.focus();
+        }
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const currentIndex = Array.from(options).indexOf(this);
+          let newIndex = e.key === 'ArrowDown' ?
+            Math.min(currentIndex + 1, options.length - 1) :
+            Math.max(currentIndex - 1, 0);
+          options[newIndex].focus();
+          options[newIndex].scrollIntoView({
+            block: 'nearest'
+          });
+        }
+      });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!selectWrapper.contains(e.target)) {
+        toggleDropdown(false);
+      }
+    });
+
+    // ===== AUTO CLOSE ALERT =====
+    document.querySelectorAll('.alert .alert-close').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var alert = this.closest('.alert');
+        if (alert) {
+          alert.style.transition = 'opacity 0.3s ease';
+          alert.style.opacity = '0';
+          setTimeout(function() {
+            alert.remove();
+          }, 300);
+        }
+      });
+    });
+
+    // Auto hide alerts after 5 seconds
+    document.querySelectorAll('.alert').forEach(function(alert) {
+      setTimeout(function() {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(function() {
+          if (alert.parentNode) {
+            alert.remove();
+          }
+        }, 500);
+      }, 5000);
+    });
+
+    // ===== FORM VALIDATION =====
+    var form = document.getElementById('studentForm');
+    var submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(event) {
+      // Check if major is selected
+      if (!majorHidden.value) {
+        event.preventDefault();
+        event.stopPropagation();
+        selectTrigger.classList.add('is-invalid');
+        selectTrigger.focus();
+
+        // Scroll to major
+        selectWrapper.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        return;
+      }
+
+      // Check if form is valid
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Find first invalid field and focus
+        var firstInvalid = form.querySelector(':invalid');
+        if (firstInvalid) {
+          firstInvalid.focus();
+          firstInvalid.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }
+
+      // Add validation class to all fields
+      var inputs = form.querySelectorAll('.form-control');
+      inputs.forEach(function(input) {
+        if (input.checkValidity()) {
+          input.classList.remove('is-invalid');
+          input.classList.add('is-valid');
+        } else {
+          input.classList.remove('is-valid');
+          input.classList.add('is-invalid');
+        }
+      });
+
+      // Disable submit button to prevent double submission
+      if (form.checkValidity() && majorHidden.value) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Menyimpan...';
+      }
+    });
+
+    // ===== REAL-TIME VALIDATION =====
+    var inputs = form.querySelectorAll('.form-control');
+    inputs.forEach(function(input) {
+      input.addEventListener('blur', function() {
+        if (this.value.trim() !== '') {
+          if (this.checkValidity()) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+          } else {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+          }
+        }
+      });
+
+      input.addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+          if (this.checkValidity()) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+          } else {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+          }
+        } else {
+          this.classList.remove('is-valid');
+          this.classList.remove('is-invalid');
+        }
+      });
+    });
+
+    // ===== PREVENT ENTER KEY ON FORM =====
+    form.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+        event.preventDefault();
+        submitBtn.click();
+      }
+    });
+
+  })();
+</script>

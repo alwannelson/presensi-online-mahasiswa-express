@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const secretKey = process.env.SECRET_KEY
 
-exports.authCheck = (req, res, next) => {
+exports.tokenCheck = (req, res, next) => {
     try {
         const token = req.cookies.token
 
@@ -10,15 +10,10 @@ exports.authCheck = (req, res, next) => {
             req.flash('error', 'Harap login terlebih dahulu.')
             return res.redirect('/login/')
         }
-
+        
         const decoded = jwt.verify(token, secretKey)
         req.user = decoded
-        if (decoded.role !== 'student') {
-            req.flash('error', 'Sesi tidak ditemukan. Harap login ulang.')
-            return res.redirect('/login/')
-        } else {
-            next()
-        }
+        next()
     } catch (err) {
         console.log(err)
         req.flash('error', 'Sesi telah berakhir. Harap login ulang.')
@@ -26,28 +21,13 @@ exports.authCheck = (req, res, next) => {
     }
 }
 
-exports.authCheckAcademic = (req, res, next) => {
-    try {
-        const token = req.cookies.token
-        
-        if (!token) {
-            req.flash('error', 'Harap login terlebih dahulu.')
-            return res.redirect('/login/academic')
-        }
-
-        const decoded = jwt.verify(token, secretKey)
-        req.user = decoded
-        console.log(decoded)
-        if (decoded.role !== 'academic') {
-            req.flash('error', 'Sesi tidak ditemukan. Harap login ulang.')
-            return res.redirect('/login/academic')
+exports.roleCheck = (...role) => {
+    return function (req, res, next) {
+        if (!role.includes(req.user.role)) {
+            req.flash('error', 'Maaf kredensial tidak cocok. Harap login ulang.')
+            return res.redirect('/login')
         } else {
             next()
         }
-    } catch (err) {
-        console.log(err)
-        req.flash('error', 'Sesi telah berakhir. Harap login ulang.')
-        return res.redirect('/login/academic')
     }
-
 }

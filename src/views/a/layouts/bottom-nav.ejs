@@ -1,246 +1,85 @@
-<!-- bottom-nav.ejs - Floating Bottom Navigation -->
-<div class="bottom-nav-wrapper">
-  <div class="bottom-nav">
-    <div class="bottom-nav-container">
-      <a href="/admin/dashboard" class="bottom-nav-item <%= activeMenu === 'dashboard' ? 'active' : '' %>" data-tooltip="Dashboard">
-        <div class="nav-icon">
-          <i class="fas fa-tachometer-alt"></i>
-        </div>
-        <span class="nav-label">Dashboard</span>
-      </a>
-      
-      <a href="/admin/mahasiswa" class="bottom-nav-item <%= activeMenu === 'mahasiswa' ? 'active' : '' %>" data-tooltip="Mahasiswa">
-        <div class="nav-icon">
-          <i class="fas fa-user-graduate"></i>
-        </div>
-        <span class="nav-label">Mahasiswa</span>
-      </a>
-      
-      <a href="/admin/dosen" class="bottom-nav-item <%= activeMenu === 'dosen' ? 'active' : '' %>" data-tooltip="Dosen">
-        <div class="nav-icon">
-          <i class="fas fa-chalkboard-teacher"></i>
-        </div>
-        <span class="nav-label">Dosen</span>
-      </a>
-      
-      <a href="/admin/matakuliah" class="bottom-nav-item <%= activeMenu === 'matakuliah' ? 'active' : '' %>" data-tooltip="Matakuliah">
-        <div class="nav-icon">
-          <i class="fas fa-book"></i>
-        </div>
-        <span class="nav-label">Matakuliah</span>
-      </a>
-      
-      <a href="/admin/jadwal" class="bottom-nav-item <%= activeMenu === 'jadwal' ? 'active' : '' %>" data-tooltip="Jadwal">
-        <div class="nav-icon">
-          <i class="fas fa-calendar-alt"></i>
-        </div>
-        <span class="nav-label">Jadwal</span>
-      </a>
-    </div>
-  </div>
-</div>
-
 <style>
-  /* Floating Bottom Navigation Styles */
-  .bottom-nav-wrapper {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    z-index: 1000;
-    pointer-events: none;
-  }
-  
-  .bottom-nav {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 50px;
-    padding: 8px 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    pointer-events: auto;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Dark theme support */
-  body.dark-theme .bottom-nav {
-    background: rgba(30, 30, 46, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-  
-  .bottom-nav-container {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  
-  .bottom-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: #8ba0b0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 8px 16px;
-    border-radius: 40px;
-    position: relative;
-    cursor: pointer;
-  }
-  
-  .nav-icon {
-    font-size: 18px;
-    margin-bottom: 2px;
-    transition: all 0.3s ease;
-  }
-  
-  .nav-label {
-    font-size: 10px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-  
-  /* Hover Effect - Jay Presencia Theme */
-  .bottom-nav-item:hover {
-    background: linear-gradient(135deg, rgba(140, 177, 194, 0.2) 0%, rgba(44, 90, 110, 0.2) 100%);
-    color: #2c5a6e;
-    transform: translateY(-6px);
-  }
-  
-  body.dark-theme .bottom-nav-item:hover {
-    background: linear-gradient(135deg, rgba(140, 177, 194, 0.3) 0%, rgba(44, 90, 110, 0.3) 100%);
-    color: #8cb1c2;
-  }
-  
-  .bottom-nav-item:hover .nav-icon {
-    transform: scale(1.15);
-  }
-  
-  /* Active State */
-  .bottom-nav-item.active {
-    background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(44, 90, 110, 0.3);
-  }
-  
-  body.dark-theme .bottom-nav-item.active {
-    background: linear-gradient(135deg, #8cb1c2 0%, #2c5a6e 100%);
-    box-shadow: 0 4px 12px rgba(140, 177, 194, 0.3);
-  }
-  
-  .bottom-nav-item.active .nav-icon {
-    transform: scale(1.05);
-  }
-  
-  /* Tooltip on hover */
-  .bottom-nav-item::before {
-    /* content: attr(data-tooltip); */
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-8px);
-    background: #2c5a6e;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    pointer-events: none;
-    z-index: 1001;
-  }
-  
-  .bottom-nav-item:hover::before {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(-4px);
-  }
-  
-  /* Ripple Effect on Click */
-  .bottom-nav-item:active {
-    transform: scale(0.92);
-  }
-  
-  /* Responsive - Mobile */
-  @media (max-width: 768px) {
-    .bottom-nav {
-      padding: 6px 12px;
-      border-radius: 40px;
-      bottom: 10px;
-    }
-    
+    /* Styling Manual untuk Navigasi Utama */
     .bottom-nav-container {
-      gap: 4px;
+        position: fixed;
+        bottom: 15px; /* Memberikan sedikit jarak dari paling bawah layar agar efek melayang terlihat */
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transition: transform 0.4s ease, opacity 0.4s ease; /* Transisi smooth */
+        padding: 0 15px; /* Jarak aman kanan-kiri di layar HP */
+    }
+
+    .bottom-nav-bar {
+        background-color: #ffffff;
+        border-radius: 20px; /* REVISI: Penambahan Border Radius melengkung */
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        border: 1px solid #eaeaea;
+        max-width: 500px; /* Membuat menu berkumpul lebih rapat di tengah */
+        margin: 0 auto;
     }
     
-    .bottom-nav-item {
-      padding: 6px 12px;
+    .nav-item-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #9ca3af; 
+        font-size: 11px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        padding: 10px 12px; /* REVISI: Jarak dalam yang disesuaikan agar antar menu berdekatan */
     }
     
-    .nav-icon {
-      font-size: 16px;
+    .nav-item-link i {
+        font-size: 22px;
+        margin-bottom: 2px;
+        transition: transform 0.2s ease;
     }
-    
-    .nav-label {
-      font-size: 9px;
+
+    /* Efek Hover (Saat kursor menunjuk) */
+    .nav-item-link:hover {
+        color: #4b5563;
     }
-  }
-  
-  /* Responsive - Small Mobile */
-  @media (max-width: 480px) {
-    .bottom-nav {
-      padding: 5px 10px;
+
+    /* REVISI: Logika menu aktif (isActive) menggunakan Class .active */
+    .nav-item-link.active {
+        color: #111827 !important; /* Warna teks & ikon menu aktif menjadi gelap pekat */
+        font-weight: 600;
     }
-    
-    .bottom-nav-container {
-      gap: 2px;
+    .nav-item-link.active i {
+        transform: translateY(-2px); /* Sedikit terangkat untuk penanda aktif */
     }
-    
-    .bottom-nav-item {
-      padding: 5px 10px;
+
+    /* REVISI: Class pembantu untuk menyembunyikan bottom bar (dipicu oleh JavaScript) */
+    .nav-hidden {
+        transform: translateY(100px); /* Tergeser ke bawah keluar dari layar */
+        opacity: 0;
     }
-    
-    .nav-icon {
-      font-size: 14px;
-    }
-    
-    .nav-label {
-      font-size: 8px;
-    }
-  }
-  
-  /* Animations */
-  @keyframes navFloat {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-3px);
-    }
-  }
-  
-  .bottom-nav {
-    animation: navFloat 4s ease-in-out infinite;
-  }
-  
-  /* Hover animation untuk icon */
-  @keyframes iconPulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-  }
-  
-  .bottom-nav-item:hover .nav-icon {
-    animation: iconPulse 0.3s ease;
-  }
 </style>
+
+<div class="bottom-nav-container" id="bottom-nav">
+    <div class="bottom-nav-bar d-flex justify-content-center align-items-center py-1 gap-3">
+        
+        <a href="#" class="nav-item-link <%= (typeof currentPage !== 'undefined' && currentPage === 'dashboard') ? 'active' : '' %>">
+            <i class='bx bx-home-alt'></i>
+            <span>Beranda</span>
+        </a>
+        
+        <a href="#" class="nav-item-link <%= (typeof currentPage !== 'undefined' && currentPage === 'pelajaran') ? 'active' : '' %>">
+            <i class='bx bx-book-open'></i>
+            <span>Pelajaran</span>
+        </a>
+        
+        <a href="#" class="nav-item-link <%= (typeof currentPage !== 'undefined' && currentPage === 'agenda') ? 'active' : '' %>">
+            <i class='bx bx-calendar'></i>
+            <span>Agenda</span>
+        </a>
+        
+        <a href="#" class="nav-item-link <%= (typeof currentPage !== 'undefined' && currentPage === 'profil') ? 'active' : '' %>">
+            <i class='bx bx-user'></i>
+            <span>Profil</span>
+        </a>
+        
+    </div>
+</div>

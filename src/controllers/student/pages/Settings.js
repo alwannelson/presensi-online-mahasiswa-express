@@ -1,4 +1,5 @@
 const db = require('../../../configs/db')
+const bcrypt = require('bcrypt')
 
 exports.getSettings = async (req, res) => {
     try {
@@ -45,32 +46,83 @@ exports.getSettings = async (req, res) => {
 
 exports.updateStudent = async (req, res) => {
     try {
-        const { newNickname, newEmail, newTelephone, newAddress } = req.body
+        const { newNickname, newEmail, newTelephone, newAddress, newPassword } = req.body
         const studentNIM = req.user.nim
-        const validNickname = req.user.nickname
 
-        const [emailUnique] = await db.execute(
-            `SELECT * FROM students WHERE email = ?`, [newEmail]
-        )
+        // Buat object untuk menyimpan field yang akan diupdate
+        const updateFields = {}
+        const updateValues = []
 
-        // if (emailUnique.length >= 1) {
-        //     req.flash('error', 'Maaf, email sudah digunakan.')
-        //     return res.redirect('/s/settings')
-        // }
+        // Cek dan tambahkan field yang tidak kosong
+        if (newNickname !== undefined && newNickname !== '') {
+            updateFields.nickname = newNickname
+            updateValues.push(newNickname)
+        }
+
+        if (newEmail !== undefined && newEmail !== '') {
+            updateFields.email = newEmail
+            updateValues.push(newEmail)
+        }
+
+        if (newTelephone !== undefined && newTelephone !== '') {
+            updateFields.telephone = newTelephone
+            updateValues.push(newTelephone)
+        }
+
+        if (newAddress !== undefined && newAddress !== '') {
+            updateFields.address = newAddress
+            updateValues.push(newAddress)
+        }
+
+        if (newPassword !== undefined && newPassword !== '') {
+            const hashed = await bcrypt.hash(newPassword, 12)
+            updateFields.password = hashed
+            updateValues.push(hashed)
+        }
+
+        // Jika tidak ada field yang diupdate, redirect dengan pesan
+        if (Object.keys(updateFields).length === 0) {
+            req.flash('info', 'Tidak ada data yang diupdate.')
+            return res.redirect('/s/settings')
+        }
+
+        // Cek unique email jika email diupdate
+        if (updateFields.email) {
+            const [emailUnique] = await db.execute(
+                `SELECT * FROM students WHERE email = ? AND nim != ?`,
+                [updateFields.email, studentNIM]
+            )
+
+            if (emailUnique.length >= 1) {
+                req.flash('error', 'Maaf, email sudah digunakan.')
+                return res.redirect('/s/settings')
+            }
+        }
+
+        // Buat query dinamis
+        const setClause = Object.keys(updateFields)
+            .map(field => `${field} = ?`)
+            .join(', ')
+
+        // Tambahkan NIM ke values
+        updateValues.push(studentNIM)
 
         const [update] = await db.execute(
-            `UPDATE students SET nickname = ?, email = ?, telephone = ?, address = ? WHERE nim = ?`,
-            [newNickname, newEmail, newTelephone, newAddress, studentNIM]
+            `UPDATE students SET ${setClause} WHERE nim = ?`,
+            updateValues
         )
 
+        // Ambil data terbaru
         const [rows] = await db.execute(
             'SELECT * FROM students WHERE nim = ?', [studentNIM]
         )
 
-        req.flash('success', `Berhasil update data.`)
+        req.flash('success', 'Berhasil update data.')
         return res.redirect('/s/settings')
+
     } catch (error) {
         console.log(error)
+        req.flash('error', 'Terjadi kesalahan saat update data.')
         return res.redirect('/s/settings')
     }
 }

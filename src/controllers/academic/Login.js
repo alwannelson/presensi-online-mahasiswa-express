@@ -21,7 +21,7 @@ exports.postAcademicLogin = async (req, res) => {
     try {
         const { username, password } = req.body
         const [rows] = await db.execute(
-            `SELECT * FROM academic WHERE nickname = ?`,
+            `SELECT * FROM academic WHERE username = ?`,
             [username]
         )
 
@@ -52,7 +52,6 @@ exports.postAcademicLogin = async (req, res) => {
 
         const fromEnvHttpOnly = boolCheck(process.env.HTTP_ONLY)
         const fromEnvSecure = boolCheck(process.env.SECURE)
-        console.log(token)
 
         res.cookie('token', token, {
             httpOnly: fromEnvHttpOnly,

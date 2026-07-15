@@ -396,12 +396,7 @@
 
     <div class="mb-3">
       <label class="form-label">Password Baru</label>
-      <input type="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah">
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Konfirmasi Password Baru</label>
-      <input type="password" class="form-control" placeholder="Ketik ulang password baru">
+      <input type="password" name="newPassword" id="password" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah">
     </div>
 
     <button type="submit" class="btn-attend" style="padding: 10px 24px;" id="button-submit">
@@ -428,15 +423,15 @@
       <i class="fas fa-chevron-down"></i>
     </div>
     <div class="faq-answer">
-      <i class="fas fa-reply-all me-2"></i> Jadi... <br> 1. Langkah pertama <%= user.nickname %> harus mengizinkan
-      browser mengakses kamera perangkat agar foto/selfie presensi dapat diambil.
-      Nantinya foto tersebut akan menjadi bukti bahwa apakah <%= user.nickname %> hadir atau tidak hadir.<br>
-      2. Langkah kedua, <%= user.nickname %> masuk ke menu Hari Ini dan nanti akan ada jadwal-jadwal kuliah
-      pada hari tersebut. <br>
-      3. Kemudian jika <%= user.nickname %> hadir, maka klik tombol hadir dan nanti akan diarahkan
-      ke form pengisian presensi dan akan disuruh submit foto selfie. <br> Dan apabila <%= user.nickname %> tidak hadir, maka klik
-      tombol tidak hadir dan nanti juga akan diarahkan ke form pengisian absensi dan juga disuruh
-      submit <i>attachment</i> atau dokumen pendukung absensi seperti surat sakit, surat kerja, surat izin, dll.
+      <i class="fas fa-reply-all me-2"></i> 
+      Langkah pertama yang harus kamu lakukan adalah login menggunakan identitas kamu. Setelah itu lakukan step berikut: <br>
+      <strong>></strong> Masuk ke menu "Hari ini" untuk melihat daftar jadwal matakuliah pada hari ini. <br>
+      <strong>></strong> Pilih matakuliah yang ingin kamu ambil. Terdapat 2 opsi yaitu hadir dan tidak hadir. <br>
+        <strong>>></strong> Jika kamu menghadiri perkulihan maka silakan klik tombol "Hadir" dan akan diarahkan ke form pengisian kehadiran. <br>
+        <strong>>></strong> Jika kamu tidak menghadiri perkulihan maka silakan klik tombol "Tidak hadir" dan akan diarahkan ke form pengisian ketidak-hadiran. <br>
+        <strong>>></strong> Silakan kamu isi semua kolom yang dibutuhkan sesuai dengan keadaan yang benar. Dan jangan lupa izinkan akses lokasi dan kamera ke browser kamu agar foto selfie dan lokasi dapat dilakukan. <br>
+      <strong>></strong> Setelah kamu apply maka presensi kamu sudah tercatat sesuai dengan yang kamu isi. <br>
+      Jika terdapat ketidak sesuaian maka dosen dan akademik berwenang mengubah status presensi kamu. <br>
     </div>
   </div>
 
